@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: init-solo
+description: lean-init with the solo preset. Config, principles and a short CLAUDE.md are written and no hook is installed.
+tags: [init, solo]
+runs: 1
+execution:
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    /lean-sdlc:lean-init
+
+    Answers to every question, so do not ask: preset solo; do not install the hook.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: config-written
+    type: regex
+    pattern: 'preset: solo'
+    target: { source: file, path: .lean/config.yaml }
+  - name: test-command-detected
+    type: regex
+    pattern: 'npm test|node --test'
+    target: { source: file, path: .lean/config.yaml }
+  - name: no-hats-for-solo
+    type: regex
+    pattern: 'hats'
+    match: not_contains
+    target: { source: file, path: .lean/config.yaml }
+  - name: claude-md-pointer
+    type: regex
+    flags: i
+    pattern: 'lean'
+    target: { source: file, path: CLAUDE.md }
+  - name: hook-not-installed
+    type: file_exists
+    path: '.claude/settings.json'
+    exists: false

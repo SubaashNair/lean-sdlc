@@ -1,0 +1,28 @@
+schema_version: "1.1"
+name: decision-conflict
+description: The request contradicts a recorded decision in plan.md. The decision is not edited, no code is written, and the conflict is named.
+tags: [gate, decisions]
+runs: 1
+execution:
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Owners should be able to delete spam feedback items from their board.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: decision-not-edited
+    type: regex
+    pattern: 'No owner delete'
+    target: { source: file, path: plan.md }
+  - name: no-delete-code
+    type: regex
+    flags: i
+    pattern: 'delete'
+    match: not_contains
+    target: { source: file, path: src/app.js }
+  - name: conflict-named
+    type: regex
+    flags: i
+    pattern: 'plan\.md|decision|conflict|contradict|revers|overrid|accepted'

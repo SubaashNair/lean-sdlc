@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: s2-plan-gate
+description: S2 feature that adds an unspecified page. A plan is written and the run stops at the gate with no code.
+tags: [size, s2, gate]
+runs: 1
+execution:
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    I want users to be able to download their orders as a CSV file from a button on the orders page. Please build it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: plan-written
+    type: file_exists
+    path: 'plan.md'
+  - name: plan-has-scope
+    type: regex
+    pattern: 'Files that change'
+    target: { source: file, path: plan.md }
+  - name: plan-has-simplest-option
+    type: regex
+    pattern: 'Simplest option'
+    target: { source: file, path: plan.md }
+  - name: plan-has-requirements
+    type: regex
+    pattern: 'Confirmed requirements'
+    target: { source: file, path: plan.md }
+  - name: no-code-before-approval
+    type: regex
+    pattern: 'orders\.csv|text/csv'
+    match: not_contains
+    target: { source: file, path: src/server.js }
+  - name: skill-fired-indicator
+    type: tool_used
+    tool: Skill
+    arm: with-only

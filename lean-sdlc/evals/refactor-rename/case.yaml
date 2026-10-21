@@ -1,0 +1,41 @@
+schema_version: "1.1"
+name: refactor-rename
+description: A multi-file rename. Every use is renamed, tests are run, and no plan or extra change appears.
+tags: [size, refactor]
+runs: 1
+execution:
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    Rename applyDiscount to discountedPrice everywhere in this project.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: definition-renamed
+    type: regex
+    pattern: 'discountedPrice'
+    target: { source: file, path: src/price.js }
+  - name: definition-old-name-gone
+    type: regex
+    pattern: 'applyDiscount'
+    match: not_contains
+    target: { source: file, path: src/price.js }
+  - name: caller-old-name-gone
+    type: regex
+    pattern: 'applyDiscount'
+    match: not_contains
+    target: { source: file, path: src/cart.js }
+  - name: test-old-name-gone
+    type: regex
+    pattern: 'applyDiscount'
+    match: not_contains
+    target: { source: file, path: test/price.test.js }
+  - name: tests-run
+    type: tool_used
+    tool: Bash
+    input_match: 'node --test|npm test'
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false

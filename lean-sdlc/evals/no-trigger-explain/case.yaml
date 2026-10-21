@@ -1,0 +1,29 @@
+schema_version: "1.1"
+name: no-trigger-explain
+description: A read-only explanation request. The lean skill must not fire and no artifacts appear.
+tags: [trigger, negative]
+runs: 1
+execution:
+  max_turns: 6
+  timeout_seconds: 180
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    Explain what src/price.js does in two sentences.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: lean-not-invoked
+    type: tool_used
+    tool: Skill
+    input_match: 'lean'
+    min: 0
+    max: 0
+    arm: both
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false
+  - name: no-lean-folder
+    type: file_exists
+    path: '.lean/**'
+    exists: false

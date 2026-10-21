@@ -1,0 +1,33 @@
+schema_version: "1.1"
+name: abstraction-trap
+description: One CSV format is requested. No factory, strategy or class appears, and fields with commas are quoted.
+tags: [yagni, abstraction]
+runs: 1
+execution:
+  max_turns: 10
+  timeout_seconds: 240
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    Add exportOrdersCsv(orders) to src/orders.js. It returns a CSV string with a header row id,item,qty.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: function-added
+    type: regex
+    pattern: 'exportOrdersCsv'
+    target: { source: file, path: src/orders.js }
+  - name: no-class-or-pattern-names
+    type: regex
+    pattern: '\bclass\b|Factory|Strategy|interface|Registry'
+    match: not_contains
+    target: { source: file, path: src/orders.js }
+  - name: no-extra-exporter-files
+    type: file_exists
+    path: '**/*{actory,trategy,egistry,xporter,ormatter}*'
+    exists: false
+  - name: quotes-and-simple
+    type: llm
+    focus: { source: file, path: src/orders.js }
+    criteria: |
+      PASS if exportOrdersCsv correctly quotes a field containing a comma (the fixture has the item "pen, blue") and uses plain functions without needless layers.
+      FAIL if it would break on "pen, blue", or it adds classes, factories, option objects or other speculative structure.

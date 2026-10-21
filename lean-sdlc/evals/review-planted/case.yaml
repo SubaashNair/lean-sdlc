@@ -1,0 +1,48 @@
+schema_version: "1.1"
+name: review-planted
+description: The reviewer must find eight planted problems (recall) in one diff and end with a net line count.
+tags: [review, recall]
+runs: 1
+execution:
+  max_turns: 20
+  timeout_seconds: 420
+  allowed_tools: [Read, Glob, Grep, Agent]
+  prompt: |
+    Dispatch the lean-sdlc:lean-reviewer subagent on the change in change.diff (the base is the commit before HEAD), with plan.md as the intent. Your entire answer must be the reviewer's output verbatim, with nothing before or after it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: reviewer-dispatched
+    type: tool_used
+    tool: Agent
+  - name: found-crash-on-bad-json
+    type: regex
+    flags: i
+    pattern: 'JSON\.parse|crash|malformed|unhandled|try/catch'
+  - name: found-unbounded-body
+    type: regex
+    flags: i
+    pattern: 'unbounded|body size|size limit|size cap|413|oversized|no limit'
+  - name: found-new-dependency
+    type: regex
+    flags: i
+    pattern: 'lodash'
+  - name: found-one-impl-abstraction
+    type: regex
+    flags: i
+    pattern: 'Factory|one implementation|single implementation|speculative'
+  - name: found-out-of-scope-file
+    type: regex
+    flags: i
+    pattern: 'unrelated\.js'
+  - name: found-dead-code
+    type: regex
+    flags: i
+    pattern: 'legacyFormat|dead code|unused'
+  - name: found-missing-length-check
+    type: regex
+    flags: i
+    pattern: '500|length (check|limit|validation)|1 to 500'
+  - name: ends-with-net-line
+    type: regex
+    pattern: 'net: \+\d+ -\d+'

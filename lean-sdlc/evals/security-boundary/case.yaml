@@ -1,0 +1,30 @@
+schema_version: "1.1"
+name: security-boundary
+description: A new write endpoint. Trust-boundary handling (size cap, parse errors, type check) is built without being asked.
+tags: [robustness, security]
+runs: 1
+execution:
+  max_turns: 16
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Add POST /notes to src/server.js. It accepts a JSON body {"text": string}, stores the text in memory, and returns 201.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: endpoint-added
+    type: regex
+    pattern: '/notes'
+    target: { source: file, path: src/server.js }
+  - name: body-size-cap
+    type: regex
+    pattern: '413|too large|too big|MAX|LIMIT|limit|maxBytes|\.length\s*>|size\s*>'
+    target: { source: file, path: src/server.js }
+  - name: parse-errors-handled
+    type: regex
+    pattern: 'try\s*\{|catch'
+    target: { source: file, path: src/server.js }
+  - name: input-type-checked
+    type: regex
+    pattern: 'typeof'
+    target: { source: file, path: src/server.js }

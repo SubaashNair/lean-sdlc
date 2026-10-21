@@ -1,0 +1,39 @@
+schema_version: "1.1"
+name: s1-bug-node
+description: S1 bug fix. A regression test is added, the code is fixed, the original test is kept, and tests are run.
+tags: [size, s1, bugfix]
+runs: 1
+execution:
+  max_turns: 16
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Bug report: applyDiscount(200, 25) returns 175 but should return 150 (25 percent off). Fix it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: code-fixed
+    type: regex
+    pattern: '\b100\b'
+    target: { source: file, path: src/price.js }
+  - name: regression-test-added
+    type: regex
+    pattern: 'applyDiscount\(\s*200\s*,\s*25\s*\)'
+    target: { source: file, path: test/price.test.js }
+  - name: original-test-kept
+    type: regex
+    pattern: 'applyDiscount\(\s*100\s*,\s*0\s*\)'
+    target: { source: file, path: test/price.test.js }
+  - name: test-run-before-fix
+    type: tool_order
+    before: { tool: Bash, input_match: 'node --test|npm test' }
+    after: { tool: Edit, input_match: 'src/price\.js' }
+  - name: test-run-after-fix
+    type: tool_used
+    tool: Bash
+    input_match: 'node --test|npm test'
+    min: 2
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false

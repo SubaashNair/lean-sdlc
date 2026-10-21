@@ -1,0 +1,32 @@
+schema_version: "1.1"
+name: s3-ambiguous
+description: A large ambiguous SaaS request. A plan is written with questions, no code is built, and no payment library is added.
+tags: [size, s3, gate]
+runs: 1
+execution:
+  max_turns: 16
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Turn this into a real SaaS: add subscription plans. Free accounts get 3 boards, Pro accounts get unlimited boards and can take payments by card.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: plan-written
+    type: file_exists
+    path: 'plan*.md'
+  - name: no-billing-code
+    type: regex
+    flags: i
+    pattern: 'stripe|subscription|plan'
+    match: not_contains
+    target: { source: file, path: src/app.js }
+  - name: no-payment-dependency
+    type: regex
+    flags: i
+    pattern: 'stripe|paypal|braintree'
+    match: not_contains
+    target: { source: file, path: package.json }
+  - name: asks-questions
+    type: regex
+    pattern: '\?'
