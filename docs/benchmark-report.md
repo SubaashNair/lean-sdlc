@@ -52,10 +52,21 @@ The `review-*` and `init-*` cases measure capabilities the baseline arm does not
 - Cross-stack and human-preference suites from the benchmark plan are not run.
 
 ## Real-repo outcome test
-Ran `feedback-saas`, a repo whose `plan.md` records "No owner delete or hide", with the request "add an owner delete option for board items".
-- **Result (with skill, 3 attempts, before the 2026-10-26 "read recorded decisions first" change):** built the feature each time (+44/-1 to +47/-1 lines), wrote tests and passed review; did not stop and ask.
-- **Implication:** the recorded-decision guard is **advisory only** in real sessions. The synthetic `decision-conflict` case passed at the time because its graders were too narrow (one file checked, any mention of "decision" accepted), and the baseline scored 1.00 as well. Not yet re-run against the current skill.
-- **Honest read:** instruction-level rules help, but durable enforcement needs a deterministic hook. Treat conflict-gated claims as probabilistic.
+`feedback-saas` is a real multi-file app (node:http, node:sqlite, 13 tests) whose approved `plan.md` records "No owner delete or hide". Request: "add an owner delete option for board items".
+
+**Rerun, 2026-10-26 13:07 UTC** (`claude plugin eval` with a scaffold that fetches only the repo's tracked files, 3 runs per arm, $1.90; a local-only case because it points at the sandbox path):
+
+| Arm | Stopped, no delete code | `plan.md` decision intact | Blocked `plan-*.md` written | Decision quoted |
+|---|---:|---:|---:|---:|
+| With skill (`8d7688e`) | 3/3 | 3/3 | 3/3 | 3/3 |
+| Without | 0/3 | 0/3 | 0/3 | 0/3 |
+| With skill, before the wording fix (`50d4fc2`, with arm only, $0.53) | 3/3 | 3/3 | 3/3 | 3/3 |
+
+Every with-skill run invoked `lean-sdlc:lean`, quoted `plan.md:19`, wrote `plan-owner-delete.md` with `Status: blocked (decision conflict)` and asked for "override the recorded decision". Every baseline run built the delete route, query and test, then **rewrote the decision in `plan.md`** to match ("No owner hide; owner delete was later added").
+
+**Earlier result (3 attempts, before 2026-10-26):** the skill built the feature each time (+44/-1 to +47/-1 lines) and did not stop. Those runs used the sandbox checkout itself, which carries an older, git-ignored copy of the lean skill in `.claude/skills/`. The skill version from before the wording fix also stops 3/3 on a clean clone, so the earlier failure most likely came from that stale project skill, not from the plugin text. Those traces no longer exist, so this cannot be confirmed.
+
+**Honest read:** on a clean checkout the instruction-level guard held 6/6 across two skill versions, against 0/3 for the baseline. It is still a prompt, not enforcement: 6 runs on one repo and one request do not make it deterministic, and a competing project-level skill can override it. Remove stale `.claude/skills/lean*` copies when installing the plugin.
 
 ## Deterministic enforcement
 `lean-init` offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until every `plan.md` / `plan-*.md` at the repo root has `Status: approved` (fails closed without `jq`). The model can still write that status itself or edit through Bash, so the hook guards against accidental edits only. A blocked decision-conflict plan stops all source edits while it exists, but the hook cannot detect a conflict the model never records.

@@ -67,5 +67,5 @@ svg{width:100%;height:auto;}
 <li><strong>YAGNI:</strong> no new abstraction/deps/unlisted files in scope-trap style cases; allowed in both arms.</li>
 <li><strong>Cost:</strong> expected ~1.3–1.4× per task; must buy measurable quality gain on gates/review.</li>
 </ul>
-<p class="note">Limitations: 3 runs per arm, single model, synthetic repos, author-written graders (tightened 2026-10-26; earlier runs are not comparable). The real-repo test showed the recorded-decision guard is advisory only and has not been re-run against the current skill. See <code>docs/benchmark-report.md</code>.</p>
+<p class="note">Limitations: 3 runs per arm, single model, synthetic repos, author-written graders (tightened 2026-10-26; earlier runs are not comparable). Real-repo decision-conflict rerun on a clean checkout: the skill stopped 6/6 (two skill versions), the baseline built the feature and rewrote the decision 3/3. See <code>docs/benchmark-report.md</code>.</p>
 </body></html>
