@@ -55,4 +55,4 @@ Ran `feedback-saas`, a repo whose `plan.md` records "No owner delete or hide", w
 
 
 ## Deterministic enforcement update
-`lean-init` now offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until `plan.md` has an approved/ready status. This covers the ordinary S2 gate. It cannot infer whether a request conflicts with a recorded "No ..." decision, so that specific check remains advisory.
+`lean-init` now offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until every `plan.md` / `plan-*.md` at the repo root has `Status: approved` (fails closed without `jq`). The model can still write that status itself or edit through Bash, so the hook guards against accidental edits only. This covers the ordinary S2 gate. It cannot infer whether a request conflicts with a recorded "No ..." decision, so that specific check remains advisory.
