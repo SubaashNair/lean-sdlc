@@ -27,4 +27,4 @@ Report only what is wrong. Do not hunt for gaps: if a pass finds nothing, write 
 
 ## Output
 
-One line per finding: `[pass] file:line: problem. Fix: ...`. Mark each Important (breaks behavior, leaks data, breaches scope) or Nit. Show Important findings in full, at most five Nits, the rest as a count. End with `net: +A -D lines` taken from `git diff --shortstat`, or counted from the diff file you were given. With no findings, write `No findings.` and the net line. Do not pad; if the checks pass, `No findings.` is a valid and good answer.
+One line per finding: `[pass] file:line: problem. Fix: ...`. Mark each Important (breaks behavior, leaks data, breaches scope) or Nit. Show Important findings in full, at most five Nits, the rest as a count. Always end with a line exactly `net: +A -D lines` on its own line (`+0 -0` when nothing changed), taken from `git diff --shortstat` or counted from the diff file you were given. A clean diff ends with `No findings.` on its own line followed by that net line. Do not pad; if the checks pass, `No findings.` is a valid answer.
