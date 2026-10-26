@@ -39,7 +39,7 @@ Stop at the first rung that holds: needed at all? already in this codebase? stdl
 ## 3. Build loop (S1 and up)
 
 1. Write the check that proves the change. For a bug, reproduce it as a failing test first and see it fail for the expected reason. For a small addition, use the repo's existing test setup; if there is none, a one-line run is enough, and do not create a test harness.
-2. For a bug fix, run the check and see it fail before you touch the source, then commit the failing test on a branch (create `fix/<name>` if you are on main or master). If the test-edit hook is installed, then create `.lean/fixing` (delete it when done). Never change a test to make it pass unless the test is wrong; if it is, say so and show it failing on the old code before recommitting.
+2. For a bug fix, run the check and see it fail before you touch the source, then commit the failing test on a branch (create `fix/<name>` if you are on main or master). Then run `touch .lean/fixing`; the opt-in test-edit hook blocks test edits while that file exists, and it does nothing if the hook is absent. Delete the file when done. Never change a test to make it pass unless the test is wrong; if it is, say so and show it failing on the old code before recommitting.
 3. Build the smallest slice that passes. Run the check often and the full suite at the end (every time, if it takes seconds).
 4. Every changed line traces to the request. Touch only files named in the plan. Anything else you notice goes to `.lean/followups.md`, one line each (`file: what (why not now)`), not into the diff. Never park a correctness or security problem there.
 5. Optimize only with a measurement. Cite it.
@@ -74,7 +74,7 @@ A requirement a confirmed one cannot work without (sign-in for accounts, say) is
 
 ## 6. Done
 
-No "done" without fresh output of the check, build and lint (paste it). Merge is a human decision: in `solo` that is the user; in `team` a different person than the author. Final report: what changed, evidence, `net: +A -D lines`, follow-ups.
+No "done" without fresh output of the check, build and lint (paste it). Merge is a human decision: in `solo` that is the user; in `team` a different person than the author (name the `tech_lead` from `.lean/config.yaml`). Final report: what changed, evidence, `net: +A -D lines`, follow-ups.
 
 ## Context hygiene
 

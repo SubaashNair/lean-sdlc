@@ -39,7 +39,7 @@ Generated files and anything CI already enforces.
 ```
 
    Then print this checklist (do not perform it): branch protection needing one human approval, CODEOWNERS entries, the author never approves their own merge.
-6. **Hook (opt in):** offer it in one line. Only on a yes, write `.lean/block-test-edits.sh` (make it executable, needs `jq`) and add the hook to `.claude/settings.json`.
+6. **Hook (opt in):** offer it in one line. Only on a yes, write `.lean/block-test-edits.sh` (make it executable, needs `jq`), add `.lean/fixing` to `.gitignore`, and add the hook to `.claude/settings.json`, keeping `${CLAUDE_PROJECT_DIR}` literal (never an absolute path, since the file is shared). If the settings write is denied, say so and print the snippet for the user to add.
 
 ```bash
 #!/bin/bash
