@@ -1,19 +1,18 @@
 ---
 name: lean
-description: YAGNI-first workflow for features, bug fixes (even one-line ones), refactors and renames across files. Skip for typos and cosmetic edits. Sizes the task, plans only when needed, builds test-first, reviews in fresh context, keeps the diff minimal.
+description: YAGNI-first workflow for features, bug fixes (even one-line ones), refactors and renames across files. Skip for typos, cosmetic edits and questions that change no code. Sizes the task, plans only when needed, builds test-first, reviews in fresh context, keeps the diff minimal.
 ---
 
 # Lean
 
 Do the least that satisfies confirmed requirements. A stage, artifact or gate exists only if skipping it has caused a failure. The preset (`solo` or `team`) is in `.lean/config.yaml`; with no file, assume `solo`.
 
-## Principles
-
-Follow YAGNI, KISS, DRY and SOLID where appropriate.
-
 ## Hard gates (before any other action)
-- A recorded decision always wins: if any line of `plan.md` or an accepted risk says "No ..." (or otherwise rules something out) and the request asks for that thing, write a new `plan-<name>.md` (never overwrite the plan that holds the decision) with `Status: blocked (decision conflict)`, name the exact line and the request, ask for an explicit "override the recorded decision", then stop. Do not write tests or code, even exploratory. Do not rename or qualify the decision.
-- The plan gate holds in non-interactive runs: write the plan, stop, and report its path.
+
+1. **Read recorded decisions first.** Before sizing, read `plan.md`, every `plan-*.md` and any ADRs (`docs/adr/`, `adr/`) that exist. A recorded decision is a line or bullet that starts with "No ...", an accepted risk, or an ADR's decision; options a plan lists as rejected are not.
+2. **A recorded decision always wins**, whatever the task size. If the request asks for something a recorded decision rules out, write a new `plan-<name>.md` with `Status: blocked (decision conflict)` (never overwrite or edit the file that holds the decision), quote the exact line and the request, ask the user to reply "override the recorded decision", and stop. No tests or code, not even exploratory. Ordinary approval does not count; only a reply with that phrase does, and it goes into the plan before any code. Do not rename or qualify the decision. If you cannot ask, report the plan path and stop. An override covers only the request it answered.
+
+## Principles
 
 1. Implement only confirmed requirements.
 2. Do not introduce speculative features.
@@ -29,12 +28,12 @@ Before adding a dependency or architectural layer, explain in one sentence why t
 
 | Size | Test | Do |
 |---|---|---|
-| S0 | The diff fits in one sentence | Do it, then run the existing tests if there are any. No artifact. |
-| S1 | Small change or bug | Check first, build, show evidence. Intent lives in the PR or issue body. |
-| S2 | Feature, several files, or anything that adds a page, endpoint or schema the user has not specified | `plan.md`, plan gate, tracer slices, review. |
+| S0 | The diff fits in one sentence and is not a bug fix | Do it, then run the existing tests if there are any. No artifact. |
+| S1 | Small change, any bug fix, or a behavior-preserving refactor or rename across files | Check first, build, show evidence. Intent lives in the PR or issue body. |
+| S2 | Feature, new behavior across several files, or anything that adds a page, endpoint or schema the user has not specified | `plan.md`, plan gate, tracer slices, review. |
 | S3 | Large or ambiguous | `plan.md` plus a spec section, tickets that each fit one fresh context. |
 
-When unsure between two sizes, pick the smaller and say so. Exception: if the request contradicts a recorded decision (in `plan.md`, an accepted risk or an ADR), it is S2 at least, and you do not build. Write `plan.md` naming the conflict and the decision it overwrites, ask for an explicit "yes, override the decision" (not ordinary approval), and stop. Until that answer comes, write the plan, stop and report its path; implement nothing, not even a trial. Never edit a decision to match the request.
+When unsure between two sizes, pick the smaller and say so.
 
 ## 2. Climb the ladder before writing code
 
@@ -42,13 +41,13 @@ Stop at the first rung that holds: needed at all? already in this codebase? stdl
 
 ## 3. Build loop (S1 and up)
 
-1. Check for a decision conflict: if the request contradicts a recorded decision (see "Size it"), stop and go to the plan gate. Do not write tests or code until it is resolved.
-2. Write the check that proves the change. For a bug, reproduce it as a failing test first and see it fail for the expected reason. For a small addition, use the repo's existing test setup; if there is none, a one-line run is enough, and do not create a test harness.
-2. For a bug fix, run the check and see it fail before you touch the source, then commit the failing test on a branch (create `fix/<name>` if you are on main or master). Then run `touch .lean/fixing`; the opt-in test-edit hook blocks test edits while that file exists, and it does nothing if the hook is absent. Delete the file when done. Never change a test to make it pass unless the test is wrong; if it is, say so and show it failing on the old code before recommitting.
-3. Build the smallest slice that passes. Run the existing test command at least once **before the first source edit** (to confirm the failing case) and again at the end; run it often in between, and every time if the suite takes seconds. The final report cites fresh output of that command.
-4. Every changed line traces to the request. Touch only files named in the plan. Anything else you notice goes to `.lean/followups.md`, one line each (`file: what (why not now)`), not into the diff. Never park a correctness or security problem there.
-5. Optimize only with a measurement. Cite it.
-6. Trust boundaries are always in scope, even when unlisted: validate and cap input, handle errors so one bad request cannot crash the process, check auth and ownership. Label them `implied`.
+1. Write the check that proves the change. For a bug, reproduce it as a failing test. For a small addition, use the repo's existing test setup; if there is none, a one-line run is enough, and do not create a test harness.
+2. Run the repo's test command (or that one-line check) **before the first source edit** and again at the end; for a bug, see it fail for the expected reason first. Run it often in between, and every time if the suite takes seconds. The final report cites fresh output.
+3. For a bug fix, commit the failing test on a branch (create `fix/<name>` if you are on main or master), then run `touch .lean/fixing`; the opt-in test-edit hook blocks test edits while that file exists, and it does nothing if the hook is absent. Delete the file when done. Never change a test to make it pass unless the test is wrong; if it is, say so and show it failing on the old code before recommitting.
+4. Build the smallest slice that passes.
+5. Every changed line traces to the request. Touch only files named in the plan. Anything else you notice goes to `.lean/followups.md`, one line each (`file: what (why not now)`), not into the diff. Never park a correctness or security problem there.
+6. Optimize only with a measurement. Cite it.
+7. Trust boundaries are always in scope, even when unlisted: validate and cap input, handle errors so one bad request cannot crash the process, check auth and ownership. Label them `implied`.
 
 ## 4. Plan gate (S2 and up)
 
@@ -68,7 +67,7 @@ Size: S2 | Date: YYYY-MM-DD | Status: draft
 ## Proof (the command that must pass)
 ```
 
-A requirement a confirmed one cannot work without (sign-in for accounts, say) is `implied`: include it, label it, and name it at the gate. If the plan exists because of a decision conflict, the user's normal "approved" is not enough: require them to say they are overriding the recorded decision, and include that override sentence in the plan before any code. Show the plan path and ask for approval, then wait. No code before a yes. Only after that yes, set `Status: approved` and quote the user's reply on the next line; never set it on your own. If you cannot ask (non-interactive run) or no answer has come, write the plan, stop, and report its path. Never pass this gate on your own.
+A requirement a confirmed one cannot work without (sign-in for accounts, say) is `implied`: include it, label it, and name it at the gate. Show the plan path and ask for approval, then wait. No code before a yes (for a decision-conflict plan, only the override phrase from the hard gates counts). After the yes, set `Status: approved` and quote the user's reply on the next line; never set it on your own. If you cannot ask (non-interactive run) or no answer has come, write the plan, stop, and report its path.
 
 ## 5. Review
 
@@ -83,4 +82,4 @@ No "done" without fresh output of the check, build and lint (paste it). Merge is
 
 ## Context hygiene
 
-Hand off with file paths, not pasted content. Use a subagent for exploration and for verbose output. `/clear` between S3 tickets. Do not name a model in a skill; model switches break the cache.
+Hand off with file paths, not pasted content. Use a subagent for exploration and for verbose output. `/clear` between S3 tickets.
