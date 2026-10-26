@@ -15,7 +15,7 @@ A YAGNI-first workflow for AI-assisted software development in Claude Code. It s
 Or install from the marketplace once published:
 
 ```bash
-/plugin install lean-sdlc --marketplace SubaashNair/AI_SDLC
+/plugin install lean-sdlc --marketplace SubaashNair/lean-sdlc
 ```
 
 Try it locally from a checkout:
