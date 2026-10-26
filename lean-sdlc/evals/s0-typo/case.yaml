@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: s0-typo
+description: S0 one-sentence diff. The change is made and no artifact is produced.
+tags: [size, s0]
+runs: 1
+execution:
+  max_turns: 8
+  timeout_seconds: 240
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    Fix the typo 'recieve' in README.md
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: typo-fixed
+    type: regex
+    pattern: 'We receive requests'
+    target: { source: file, path: README.md }
+  - name: typo-gone
+    type: regex
+    pattern: 'recieve'
+    match: not_contains
+    target: { source: file, path: README.md }
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false
+  - name: no-lean-folder
+    type: file_exists
+    path: '.lean/**'
+    exists: false
+  - name: skill-fired-indicator
+    type: tool_used
+    tool: Skill
+    arm: with-only

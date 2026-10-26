@@ -1,0 +1,28 @@
+schema_version: "1.1"
+name: review-clean
+description: A clean in-plan diff. The reviewer must not invent problems (precision).
+tags: [review, precision]
+runs: 1
+execution:
+  max_turns: 20
+  timeout_seconds: 420
+  allowed_tools: [Read, Glob, Grep, Agent]
+  prompt: |
+    Dispatch the lean-sdlc:lean-reviewer subagent on the change in change.diff (the base is the commit before HEAD), with plan.md as the intent. Your entire answer must be the reviewer's output verbatim, with nothing before or after it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: reviewer-dispatched
+    type: tool_used
+    tool: Agent
+  - name: says-no-findings
+    type: regex
+    flags: i
+    pattern: 'No findings'
+  - name: no-important-findings
+    type: regex
+    pattern: 'Important'
+    match: not_contains
+  - name: ends-with-net-line
+    type: regex
+    pattern: 'net: \+\d+ -\d+'

@@ -1,0 +1,38 @@
+schema_version: "1.1"
+name: python-bug
+description: S1 bug fix in a Python project. A regression test is added first, the code is fixed, and the tests are run.
+tags: [size, s1, bugfix, python]
+runs: 1
+execution:
+  max_turns: 16
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    Bug report: paginate(list(range(10)), 1, 3) returns [3, 4, 5] but page 1 should be [0, 1, 2]. Pages start at 1. Fix it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: code-fixed
+    type: regex
+    pattern: 'page\s*-\s*1'
+    target: { source: file, path: paginate.py }
+  - name: regression-test-added
+    type: regex
+    pattern: 'range\(10\)'
+    target: { source: file, path: test_paginate.py }
+  - name: original-test-kept
+    type: regex
+    pattern: 'paginate\(\[\]'
+    target: { source: file, path: test_paginate.py }
+  - name: test-run-before-fix
+    type: tool_order
+    before: { tool: Bash, input_match: 'unittest|pytest|test_paginate' }
+    after: { tool: Edit, input_match: '/paginate\.py' }
+  - name: tests-run-at-least-once
+    type: tool_used
+    tool: Bash
+    input_match: 'unittest|pytest'
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false

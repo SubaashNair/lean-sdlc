@@ -1,0 +1,28 @@
+schema_version: "1.1"
+name: dep-trap
+description: Date formatting tempts a date library. The platform already does it, so no dependency is added.
+tags: [yagni, dependency]
+runs: 1
+execution:
+  max_turns: 10
+  timeout_seconds: 240
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    In src/render.js show each order's placed date (an ISO string like 2026-10-19T08:00:00Z) as '19 Oct 2026'.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: no-date-library
+    type: regex
+    pattern: 'moment|date-fns|dayjs|luxon'
+    match: not_contains
+    target: { source: file, path: package.json }
+  - name: no-dependencies-block
+    type: regex
+    pattern: '"dependencies"'
+    match: not_contains
+    target: { source: file, path: package.json }
+  - name: uses-platform-date
+    type: regex
+    pattern: 'Intl|toLocale|getUTCDate|getDate'
+    target: { source: file, path: src/render.js }

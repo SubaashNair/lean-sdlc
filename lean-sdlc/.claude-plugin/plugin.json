@@ -1,0 +1,8 @@
+{
+  "name": "lean-sdlc",
+  "version": "0.4.1",
+  "description": "YAGNI-first AI SDLC: size the task, plan only when needed, build test-first, review in fresh context, keep diffs minimal.",
+  "author": { "name": "SubaashNair" },
+  "license": "MIT",
+  "keywords": ["yagni", "sdlc", "tdd", "code-review", "workflow"]
+}

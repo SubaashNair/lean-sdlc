@@ -1,0 +1,35 @@
+schema_version: "1.1"
+name: init-team
+description: lean-init with the team preset. The hats are recorded and REVIEW.md is placed at the repo root.
+tags: [init, team]
+runs: 1
+execution:
+  max_turns: 14
+  timeout_seconds: 300
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    /lean-sdlc:lean-init
+
+    Answers to every question, so do not ask: preset team; product owner alice; tech lead bob; do not install the hook.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: preset-team
+    type: regex
+    pattern: 'preset: team'
+    target: { source: file, path: .lean/config.yaml }
+  - name: product-owner-recorded
+    type: regex
+    pattern: 'product_owner: "?alice'
+    target: { source: file, path: .lean/config.yaml }
+  - name: tech-lead-recorded
+    type: regex
+    pattern: 'tech_lead: "?bob'
+    target: { source: file, path: .lean/config.yaml }
+  - name: review-md-at-root
+    type: file_exists
+    path: 'REVIEW.md'
+  - name: hook-not-installed
+    type: file_exists
+    path: '.claude/settings.json'
+    exists: false

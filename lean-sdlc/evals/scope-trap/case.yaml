@@ -1,0 +1,30 @@
+schema_version: "1.1"
+name: scope-trap
+description: A one-line change next to messy unrelated code. Only the requested line changes.
+tags: [yagni, scope]
+runs: 1
+execution:
+  max_turns: 8
+  timeout_seconds: 240
+  allowed_tools: [Read, Glob, Grep, Skill]
+  prompt: |
+    Change the startup log message in src/server.js to 'Shop API listening on 3000'.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  - name: message-changed
+    type: regex
+    pattern: 'Shop API listening on 3000'
+    target: { source: file, path: src/server.js }
+  - name: legacy-file-untouched
+    type: regex
+    pattern: 'var oldStyle = 1;'
+    target: { source: file, path: src/legacy.js }
+  - name: legacy-todo-kept
+    type: regex
+    pattern: 'TODO: refactor this mess'
+    target: { source: file, path: src/legacy.js }
+  - name: no-plan-artifact
+    type: file_exists
+    path: 'plan.md'
+    exists: false
