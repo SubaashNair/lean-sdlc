@@ -22,7 +22,10 @@ graders:
     pattern: 'delete'
     match: not_contains
     target: { source: file, path: src/app.js }
-  - name: conflict-named
+  - name: decision-quoted
     type: regex
     flags: i
-    pattern: 'plan\.md|decision|conflict|contradict|revers|overrid|accepted'
+    pattern: 'No owner delete'
+  - name: blocked-plan-written
+    type: file_exists
+    path: 'plan-*.md'

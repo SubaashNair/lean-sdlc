@@ -40,7 +40,7 @@ A request that contradicts a recorded decision always goes back to you. Trust bo
 `evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin. On the last full run (3 runs per case) the plugin averaged 0.99 against 0.65 for the baseline, at about 1.4 times the cost. Most of the gap is on things a plain session does not do, such as plan gates, setup and review. On small tasks that a plain session already handles well, scores are equal and the plugin only adds cost. Run it yourself:
 
 ```bash
-claude plugin eval . --scaffold --allow-tools Write Edit "Bash(node *)" "Bash(git *)"
+claude plugin eval . --scaffold --allow-tools Write Edit "Bash(node *)" "Bash(npm *)" "Bash(python3 *)" "Bash(git *)"
 ```
 
 ## Limits

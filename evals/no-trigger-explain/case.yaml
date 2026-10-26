@@ -12,6 +12,10 @@ execution:
 context:
   scaffold_script: scaffold.sh
 graders:
+  - name: explains-the-code
+    type: regex
+    flags: i
+    pattern: 'discount|percent'
   - name: lean-not-invoked
     type: tool_used
     tool: Skill

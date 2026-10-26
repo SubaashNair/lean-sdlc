@@ -78,7 +78,7 @@ A requirement a confirmed one cannot work without (sign-in for accounts, say) is
 
 ## 6. Done
 
-No "done" without fresh output of the check, build and lint (paste it). Merge is a human decision: in `solo` that is the user; in `team` a different person than the author (name the `tech_lead` from `.lean/config.yaml`). Final report: what changed, evidence, `net: +A -D lines`, follow-ups.
+No "done" without fresh output of the check, build and lint (paste it). Merge is a human decision: in `solo` that is the user; in `team` a different person than the author (name the `tech_lead` from `.lean/config.yaml`). Final report: what changed, evidence, `net: +A -D`, follow-ups.
 
 ## Context hygiene
 

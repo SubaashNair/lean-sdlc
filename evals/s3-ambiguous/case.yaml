@@ -27,6 +27,7 @@ graders:
     pattern: 'stripe|paypal|braintree'
     match: not_contains
     target: { source: file, path: package.json }
-  - name: asks-questions
+  - name: plan-has-open-questions
     type: regex
     pattern: '\?'
+    target: { source: file, path: plan.md }

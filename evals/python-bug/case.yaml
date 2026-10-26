@@ -28,10 +28,11 @@ graders:
     type: tool_order
     before: { tool: Bash, input_match: 'unittest|pytest|test_paginate' }
     after: { tool: Edit, input_match: '/paginate\.py' }
-  - name: tests-run-at-least-once
+  - name: tests-run-before-and-after
     type: tool_used
     tool: Bash
-    input_match: 'unittest|pytest'
+    input_match: 'unittest|pytest|test_paginate'
+    min: 2
   - name: no-plan-artifact
     type: file_exists
     path: 'plan.md'
