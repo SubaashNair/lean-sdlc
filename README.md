@@ -12,17 +12,27 @@ A YAGNI-first workflow for AI-assisted software development in Claude Code. It s
 
 ## Install
 
-Or install from the marketplace once published:
+Inside Claude Code:
 
 ```bash
-/plugin install lean-sdlc --marketplace SubaashNair/lean-sdlc
+/plugin marketplace add SubaashNair/lean-sdlc
+/plugin install lean-sdlc@lean-sdlc
 ```
 
-Try it locally from a checkout:
+Or from a terminal:
+
+```bash
+claude plugin marketplace add SubaashNair/lean-sdlc
+claude plugin install lean-sdlc@lean-sdlc
+```
+
+Try it from a checkout without installing:
 
 ```bash
 claude --plugin-dir .
 ```
+
+If a project has an older copy of the skill in `.claude/skills/lean*`, delete it; a project-level copy can take precedence over the plugin.
 
 Then ask for a feature, a bug fix or a refactor as usual. The skill triggers on its own, and stays out of the way for typos and questions.
 
