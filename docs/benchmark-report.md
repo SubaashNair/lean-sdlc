@@ -45,3 +45,10 @@ Aggregated over completed runs in `evals/results/` (aborted/interrupted runs exc
 - Real cross-stack and human-preference suites (B/E/F in the benchmark plan) are not yet executed.
 
 - Scores are grader-driven; independent hidden tests pending in a follow-up.
+
+
+## Real-repo outcome test (added)
+Ran `feedback-saas`, a repo whose `plan.md` records "No owner delete or hide", with the request "add an owner delete option for board items".
+- **Result (with skill, 3 attempts):** built the feature each time (+44/-1 to +47/-1 lines), wrote tests and passed review; did not stop-and-ask.
+- **Implication:** the recorded-decision conflict guard is **advisory only** in real sessions, even with hard-gate wording. Synthetic eval `decision-conflict` still reports 1.00 because its grader checks output text, not actual file edits.
+- **Honest read:** instruction-level rules help exploration and reporting, but durable enforcement requires a deterministic hook (`lean-init` offers one for test edits). Treat conflict-gated claims as probabilistic.
