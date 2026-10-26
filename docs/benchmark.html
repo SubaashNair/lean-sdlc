@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>lean-sdlc Evaluation Benchmark</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;padding:24px;background:#0d1117;color:#e6edf3;}
+h1{margin:0 0 4px;font-size:24px;} h2{margin:24px 0 8px;font-size:18px;border-bottom:1px solid #30363d;padding-bottom:4px;}
+.sub{color:#8b949e;font-size:13px;margin-bottom:16px;}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px;}
+.val{font-size:26px;font-weight:700;color:#58a6ff;} .label{font-size:12px;color:#8b949e;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:6px 8px;border-bottom:1px solid #21262d;text-align:left;}
+th{color:#8b949e;font-weight:600;}
+.bar{height:16px;border-radius:3px;display:flex;align-items:center;padding-left:6px;font-size:11px;color:#fff;min-width:28px;}
+.bar.w{background:#2ea043;} .bar.wo{background:#6e7681;}
+.delta{font-weight:600;}
+.delta.pos{color:#3fb950;} .delta.neg{color:#f85149;}
+svg{width:100%;height:auto;}
+.flow rect{fill:#161b22;stroke:#30363d;rx:6;} .flow text{fill:#e6edf3;font-size:11px;} .flow line{stroke:#58a6ff;stroke-width:1.5;}
+.note{font-size:12px;color:#8b949e;margin-top:12px;}
+</style></head><body>
+<h1>lean-sdlc Evaluation Benchmark</h1>
+<p class="sub">Aggregated over completed (non-aborted) runs in <code>evals/results/</code>. Arms: with-skill vs no-skill on identical seeded repos.</p>
+<div class="grid">
+<div class="card"><div class="val">196</div><div class="label">Completed with-runs</div></div>
+<div class="card"><div class="val">0.95</div><div class="label">Mean score with skill</div></div>
+<div class="card"><div class="val">0.64</div><div class="label">Mean score without</div></div>
+<div class="card"><div class="val">+0.31</div><div class="label">Mean Δ (all cases)</div></div>
+</div>
+<h2>Suite / case outcomes</h2>
+<table><thead><tr><th>Case</th><th>With skill</th><th>Without</th><th>Δ</th></tr></thead>
+<tbody><tr><td>abstraction-trap</td><td><div class="bar w" style="width:96%">0.96</div></td><td><div class="bar wo" style="width:96%">0.96</div></td><td class="delta">+0.00</td></tr>
+<tr><td>decision-conflict</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:100%">1.00</div></td><td class="delta">+0.00</td></tr>
+<tr><td>dep-trap</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:100%">1.00</div></td><td class="delta">+0.00</td></tr>
+<tr><td>init-solo</td><td><div class="bar w" style="width:83%">0.83</div></td><td><div class="bar wo" style="width:20%">0.20</div></td><td class="delta">+0.63</td></tr>
+<tr><td>init-team</td><td><div class="bar w" style="width:93%">0.93</div></td><td><div class="bar wo" style="width:20%">0.20</div></td><td class="delta">+0.73</td></tr>
+<tr><td>no-trigger-explain</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:100%">1.00</div></td><td class="delta">+0.00</td></tr>
+<tr><td>python-bug</td><td><div class="bar w" style="width:89%">0.89</div></td><td><div class="bar wo" style="width:80%">0.80</div></td><td class="delta">+0.09</td></tr>
+<tr><td>refactor-rename</td><td><div class="bar w" style="width:93%">0.93</div></td><td><div class="bar wo" style="width:94%">0.94</div></td><td class="delta">-0.01</td></tr>
+<tr><td>review-clean</td><td><div class="bar w" style="width:92%">0.92</div></td><td><div class="bar wo" style="width:29%">0.29</div></td><td class="delta">+0.62</td></tr>
+<tr><td>review-planted</td><td><div class="bar w" style="width:99%">0.99</div></td><td><div class="bar wo" style="width:7%">0.07</div></td><td class="delta">+0.91</td></tr>
+<tr><td>s0-typo</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:100%">1.00</div></td><td class="delta">+0.00</td></tr>
+<tr><td>s1-bug-node</td><td><div class="bar w" style="width:95%">0.95</div></td><td><div class="bar wo" style="width:76%">0.76</div></td><td class="delta">+0.18</td></tr>
+<tr><td>s2-plan-gate</td><td><div class="bar w" style="width:90%">0.90</div></td><td><div class="bar wo" style="width:0%">0.00</div></td><td class="delta">+0.90</td></tr>
+<tr><td>s3-ambiguous</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:25%">0.25</div></td><td class="delta">+0.75</td></tr>
+<tr><td>scope-trap</td><td><div class="bar w" style="width:100%">1.00</div></td><td><div class="bar wo" style="width:100%">1.00</div></td><td class="delta">+0.00</td></tr>
+<tr><td>security-boundary</td><td><div class="bar w" style="width:95%">0.95</div></td><td><div class="bar wo" style="width:75%">0.75</div></td><td class="delta">+0.20</td></tr>
+</tbody></table>
+<h2>Experiment flow</h2>
+<svg class="flow" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="70" width="130" height="40"/><text x="75" y="95" text-anchor="middle">Seeded repo state</text>
+  <line x1="140" y1="90" x2="170" y2="90"/>
+  <rect x="170" y="30" width="150" height="40"/><text x="245" y="55" text-anchor="middle">Arm A: with lean-sdlc</text>
+  <rect x="170" y="110" width="150" height="40"/><text x="245" y="135" text-anchor="middle">Arm B: baseline</text>
+  <line x1="320" y1="50" x2="360" y2="90"/><line x1="320" y1="130" x2="360" y2="90"/>
+  <rect x="360" y="70" width="150" height="40"/><text x="435" y="95" text-anchor="middle">Independent grader</text>
+  <line x1="510" y1="90" x2="550" y2="90"/>
+  <rect x="550" y="70" width="150" height="40"/><text x="625" y="95" text-anchor="middle">Metrics & cost</text>
+  <line x1="700" y1="90" x2="740" y2="90"/>
+  <rect x="740" y="70" width="150" height="40"/><text x="815" y="95" text-anchor="middle">Diagram & report</text>
+</svg>
+<h2>Thresholds & gates</h2>
+<ul>
+<li><strong>Plan gate:</strong> must write <code>plan.md</code> and not build before approval (s2). Target 1.00 vs baseline 0.00.</li>
+<li><strong>Reviewer:</strong> planted recall ≥ 0.9, clean-diff precision ≥ 0.8, false Important ≤ 1 / 3 runs.</li>
+<li><strong>Security:</strong> body cap + parse handling + type checks all present for input endpoints.</li>
+<li><strong>YAGNI:</strong> no new abstraction/deps/unlisted files in scope-trap style cases; allowed in both arms.</li>
+<li><strong>Cost:</strong> expected ~1.3–1.4× per task; must buy measurable quality gain on gates/review.</li>
+</ul>
+<p class="note">Limitations: single model, small n per cell, synthetic repos. Suites B (outcome), E (cross-stack), and F (human blind) in the plan are not yet run; see <code>docs/benchmark-report.md</code>.</p>
+</body></html>
