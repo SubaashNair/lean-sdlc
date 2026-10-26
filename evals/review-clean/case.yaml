@@ -23,6 +23,6 @@ graders:
     type: regex
     pattern: 'Important'
     match: not_contains
-  - name: ends-with-net-line
+  - name: no-findings-then-exact-net-line
     type: regex
-    pattern: 'net: \+\d+ -\d+'
+    pattern: 'No findings\.?\s*\n\s*net: \+15 -0\s*$'

@@ -1,6 +1,6 @@
 schema_version: "1.1"
 name: init-solo
-description: lean-init with the solo preset. Config, principles and a short CLAUDE.md are written and no hook is installed.
+description: lean-init with the solo preset. Config and a short CLAUDE.md are written and no hook is installed.
 tags: [init, solo]
 runs: 1
 execution:

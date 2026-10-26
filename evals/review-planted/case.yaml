@@ -38,11 +38,11 @@ graders:
   - name: found-dead-code
     type: regex
     flags: i
-    pattern: 'legacyFormat|dead code|unused'
+    pattern: 'legacyFormat'
   - name: found-missing-length-check
     type: regex
     flags: i
-    pattern: '500|length (check|limit|validation)|1 to 500'
+    pattern: '500 char|1 to 500|1-500|length (check|limit|validation)|too long|max(imum)? length|maxLength'
   - name: ends-with-net-line
     type: regex
-    pattern: 'net: \+\d+ -\d+'
+    pattern: 'net: \+\d+ -\d+\s*$'
