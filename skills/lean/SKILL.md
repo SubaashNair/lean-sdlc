@@ -12,7 +12,7 @@ Do the least that satisfies confirmed requirements. A stage, artifact or gate ex
 Follow YAGNI, KISS, DRY and SOLID where appropriate.
 
 ## Hard gates (before any other action)
-- A recorded decision always wins: if any line of `plan.md` or an accepted risk says "No ..." (or otherwise rules something out) and the request asks for that thing, write `plan.md` with `Status: blocked (decision conflict)`, name the exact line and the request, ask for an explicit "override the recorded decision", then stop. Do not write tests or code, even exploratory. Do not rename or qualify the decision.
+- A recorded decision always wins: if any line of `plan.md` or an accepted risk says "No ..." (or otherwise rules something out) and the request asks for that thing, write a new `plan-<name>.md` (never overwrite the plan that holds the decision) with `Status: blocked (decision conflict)`, name the exact line and the request, ask for an explicit "override the recorded decision", then stop. Do not write tests or code, even exploratory. Do not rename or qualify the decision.
 - The plan gate holds in non-interactive runs: write the plan, stop, and report its path.
 
 1. Implement only confirmed requirements.
@@ -68,7 +68,7 @@ Size: S2 | Date: YYYY-MM-DD | Status: draft
 ## Proof (the command that must pass)
 ```
 
-A requirement a confirmed one cannot work without (sign-in for accounts, say) is `implied`: include it, label it, and name it at the gate. If the plan exists because of a decision conflict, the user's normal "approved" is not enough: require them to say they are overriding the recorded decision, and include that override sentence in the plan before any code. Show the plan path and ask for approval, then wait. No code before a yes. If you cannot ask (non-interactive run) or no answer has come, write the plan, stop, and report its path. Never pass this gate on your own.
+A requirement a confirmed one cannot work without (sign-in for accounts, say) is `implied`: include it, label it, and name it at the gate. If the plan exists because of a decision conflict, the user's normal "approved" is not enough: require them to say they are overriding the recorded decision, and include that override sentence in the plan before any code. Show the plan path and ask for approval, then wait. No code before a yes. Only after that yes, set `Status: approved` and quote the user's reply on the next line; never set it on your own. If you cannot ask (non-interactive run) or no answer has come, write the plan, stop, and report its path. Never pass this gate on your own.
 
 ## 5. Review
 

@@ -39,15 +39,17 @@ Generated files and anything CI already enforces.
 ```
 
    Then print this checklist (do not perform it): branch protection needing one human approval, CODEOWNERS entries, the author never approves their own merge.
-6. **Hook (opt in):** offer it in one line. Only on a yes, write `.lean/block-test-edits.sh` (make it executable, needs `jq`), add `.lean/fixing` to `.gitignore`, and add the hook to `.claude/settings.json`, keeping `${CLAUDE_PROJECT_DIR}` literal (never an absolute path, since the file is shared). If the settings write is denied, say so and print the snippet for the user to add.
+6. **Hook (opt in):** offer it in one line. Only on a yes, write `.lean/block-test-edits.sh` (make it executable, needs `jq`), add `.lean/fixing` to `.gitignore`, and add the hook to `.claude/settings.json`, keeping `${CLAUDE_PROJECT_DIR}` literal and quoted as in the snippet (never an absolute path, since the file is shared). If the settings write is denied, say so and print the snippet for the user to add.
 
 ```bash
 #!/bin/bash
-# Blocks edits to test files while .lean/fixing exists (a bug-fix task).
+# Blocks edits to test files while .lean/fixing exists (a bug-fix task). Fails closed without jq.
 [ -f "${CLAUDE_PROJECT_DIR:-.}/.lean/fixing" ] || exit 0
-f=$(jq -r '.tool_input.file_path // empty')
+command -v jq >/dev/null || { echo "Test-edit hook: jq is required; install it or remove the hook." >&2; exit 2; }
+input=$(cat)
+f=$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty') && [[ -n "$input" ]] || { echo "Test-edit hook: unreadable hook input." >&2; exit 2; }
 case "$f" in
-  *_test.*|*.test.*|*.spec.*|*/test/*|*/tests/*|*/__tests__/*|test_*)
+  *_test.*|*.test.*|*.spec.*|*/test/*|*/tests/*|*/__tests__/*|test_*|*/test_*)
     echo "Fix task: fix the code, not the test. Delete .lean/fixing if the test itself is wrong." >&2
     exit 2 ;;
 esac
@@ -55,31 +57,36 @@ exit 0
 ```
 
 ```json
-{"hooks":{"PreToolUse":[{"matcher":"Edit|Write","hooks":[{"type":"command","command":"${CLAUDE_PROJECT_DIR}/.lean/block-test-edits.sh"}]}]}}
+{"hooks":{"PreToolUse":[{"matcher":"Edit|MultiEdit|Write|NotebookEdit","hooks":[{"type":"command","command":"\"${CLAUDE_PROJECT_DIR}\"/.lean/block-test-edits.sh"}]}]}}
 ```
 
-7. **Plan-gate hook (opt in):** offer it in one line ("Block source edits until plan.md has an approved status?"). Only on a yes, write `.lean/plan-gate.sh` (make it executable, needs `jq`), **merge** this hook into the existing `.claude/settings.json` `hooks.PreToolUse` (do not overwrite the test-edit entry), keeping `${CLAUDE_PROJECT_DIR}` literal. If the settings write is denied, say so and print the snippet. This hook is deterministic enforcement for the hard gate in the `lean` skill; the skill text alone is only advisory (see the benchmark).
+7. **Plan-gate hook (opt in):** offer it in one line ("Block source edits until every plan file has an approved status?"). Only on a yes, write `.lean/plan-gate.sh` (make it executable, needs `jq`), **merge** this hook into the existing `.claude/settings.json` `hooks.PreToolUse` (do not overwrite the test-edit entry), keeping `${CLAUDE_PROJECT_DIR}` literal and quoted. If the settings write is denied, say so and print the snippet. It blocks edits while any `plan.md` or `plan-*.md` at the repo root lacks `Status: approved`, so a blocked decision-conflict plan stops all source edits. Say its limits when offering it: it checks a status line, not who wrote it, and it does not see writes made through Bash.
 
 ```bash
 #!/bin/bash
-# Blocks source edits until plan.md is approved. No plan.md -> allow (not a lean task).
-f=$(jq -r '.tool_input.file_path // empty')
+# Blocks source edits until every plan.md / plan-*.md at the repo root says Status: approved. No plan -> allow (not a lean task).
+# Fails closed: a missing jq or unreadable input blocks the edit.
+command -v jq >/dev/null || { echo "Plan gate: jq is required; install it or remove the hook." >&2; exit 2; }
+input=$(cat)
+f=$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.notebook_path // empty') && [[ -n "$input" ]] || { echo "Plan gate: unreadable hook input." >&2; exit 2; }
 [[ -z "$f" ]] && exit 0
-base="${CLAUDE_PROJECT_DIR:-.}"
 case "$f" in
   plan.md|*/plan.md|plan-*.md|*/plan-*.md|.lean/*|*/.lean/*) exit 0 ;;
 esac
-plan="$base/plan.md"
-[[ ! -f "$plan" ]] && exit 0
-if grep -Eq 'Status:[[:space:]]*(approved|ready)([^a-zA-Z]|$)' "$plan"; then
-  exit 0
-fi
-echo "Plan gate: plan.md exists but is not approved. Write/update the plan, ask for approval, and stop before editing code." >&2
-exit 2
+for plan in "${CLAUDE_PROJECT_DIR:-.}"/plan.md "${CLAUDE_PROJECT_DIR:-.}"/plan-*.md; do
+  [[ -f "$plan" ]] || continue
+  # Only the first Status: field (at line start or after "|", up to the next "|") counts; it must be exactly "approved" (any case).
+  status=$(awk '{ l = tolower($0); if (match(l, /(^|[|])[ \t*#>-]*status:/)) { v = substr(l, RSTART + RLENGTH); sub(/[|].*/, "", v); sub(/^[ \t*]+/, "", v); sub(/[ \t*.]+$/, "", v); print v; exit } }' "$plan")
+  if [[ "$status" != approved ]]; then
+    echo "Plan gate: $(basename "$plan") has status '${status:-none}', not approved. Ask the user for approval and stop before editing code." >&2
+    exit 2
+  fi
+done
+exit 0
 ```
 
 ```json
-{"hooks":{"PreToolUse":[{"matcher":"Edit|Write","hooks":[{"type":"command","command":"${CLAUDE_PROJECT_DIR}/.lean/plan-gate.sh"}]}]}}
+{"hooks":{"PreToolUse":[{"matcher":"Edit|MultiEdit|Write|NotebookEdit","hooks":[{"type":"command","command":"\"${CLAUDE_PROJECT_DIR}\"/.lean/plan-gate.sh"}]}]}}
 ```
 
 Switching presets later: rerun this skill and change only `preset` and the names.

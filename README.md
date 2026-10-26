@@ -45,7 +45,7 @@ claude plugin eval . --scaffold --allow-tools Write Edit "Bash(node *)" "Bash(gi
 
 ## Limits
 
-Results come from small synthetic projects and a few runs per case. The eval sandbox blocks `git`, so review cases pass the diff as a file. Recorded-decision conflict checks are advisory unless the optional `lean-init` plan-gate hook is installed (see the benchmark report).
+Results come from small synthetic projects and a few runs per case. The eval sandbox blocks `git`, so review cases pass the diff as a file. Recorded-decision conflict checks are advisory. The optional `lean-init` plan-gate hook blocks file edits while any `plan.md` or `plan-*.md` lacks `Status: approved`, but it checks only that line, not who wrote it, and does not see writes made through Bash. It stops accidental edits, not a model that sets the status itself (see the benchmark report).
 
 ## License
 
