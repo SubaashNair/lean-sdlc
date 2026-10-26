@@ -67,11 +67,11 @@ f=$(jq -r '.tool_input.file_path // empty')
 [[ -z "$f" ]] && exit 0
 base="${CLAUDE_PROJECT_DIR:-.}"
 case "$f" in
-  */plan.md|*/plan-*.md|.lean/*|*/.lean/*) exit 0 ;;
+  plan.md|*/plan.md|plan-*.md|*/plan-*.md|.lean/*|*/.lean/*) exit 0 ;;
 esac
 plan="$base/plan.md"
 [[ ! -f "$plan" ]] && exit 0
-if grep -Eq '^Status:[[:space:]]*(approved|ready)[[:space:]]*$' "$plan"; then
+if grep -Eq 'Status:[[:space:]]*(approved|ready)([^a-zA-Z]|$)' "$plan"; then
   exit 0
 fi
 echo "Plan gate: plan.md exists but is not approved. Write/update the plan, ask for approval, and stop before editing code." >&2

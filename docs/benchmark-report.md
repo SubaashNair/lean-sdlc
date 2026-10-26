@@ -52,3 +52,7 @@ Ran `feedback-saas`, a repo whose `plan.md` records "No owner delete or hide", w
 - **Result (with skill, 3 attempts):** built the feature each time (+44/-1 to +47/-1 lines), wrote tests and passed review; did not stop-and-ask.
 - **Implication:** the recorded-decision conflict guard is **advisory only** in real sessions, even with hard-gate wording. Synthetic eval `decision-conflict` still reports 1.00 because its grader checks output text, not actual file edits.
 - **Honest read:** instruction-level rules help exploration and reporting, but durable enforcement requires a deterministic hook (`lean-init` offers one for test edits). Treat conflict-gated claims as probabilistic.
+
+
+## Deterministic enforcement update
+`lean-init` now offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until `plan.md` has an approved/ready status. This covers the ordinary S2 gate. It cannot infer whether a request conflicts with a recorded "No ..." decision, so that specific check remains advisory.
