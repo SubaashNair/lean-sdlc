@@ -58,4 +58,28 @@ exit 0
 {"hooks":{"PreToolUse":[{"matcher":"Edit|Write","hooks":[{"type":"command","command":"${CLAUDE_PROJECT_DIR}/.lean/block-test-edits.sh"}]}]}}
 ```
 
+7. **Plan-gate hook (opt in):** offer it in one line ("Block source edits until plan.md has an approved status?"). Only on a yes, write `.lean/plan-gate.sh` (make it executable, needs `jq`), **merge** this hook into the existing `.claude/settings.json` `hooks.PreToolUse` (do not overwrite the test-edit entry), keeping `${CLAUDE_PROJECT_DIR}` literal. If the settings write is denied, say so and print the snippet. This hook is deterministic enforcement for the hard gate in the `lean` skill; the skill text alone is only advisory (see the benchmark).
+
+```bash
+#!/bin/bash
+# Blocks source edits until plan.md is approved. No plan.md -> allow (not a lean task).
+f=$(jq -r '.tool_input.file_path // empty')
+[[ -z "$f" ]] && exit 0
+base="${CLAUDE_PROJECT_DIR:-.}"
+case "$f" in
+  */plan.md|*/plan-*.md|.lean/*|*/.lean/*) exit 0 ;;
+esac
+plan="$base/plan.md"
+[[ ! -f "$plan" ]] && exit 0
+if grep -Eq '^Status:[[:space:]]*(approved|ready)[[:space:]]*$' "$plan"; then
+  exit 0
+fi
+echo "Plan gate: plan.md exists but is not approved. Write/update the plan, ask for approval, and stop before editing code." >&2
+exit 2
+```
+
+```json
+{"hooks":{"PreToolUse":[{"matcher":"Edit|Write","hooks":[{"type":"command","command":"${CLAUDE_PROJECT_DIR}/.lean/plan-gate.sh"}]}]}}
+```
+
 Switching presets later: rerun this skill and change only `preset` and the names.
