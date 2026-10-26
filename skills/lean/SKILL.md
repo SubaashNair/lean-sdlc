@@ -11,6 +11,10 @@ Do the least that satisfies confirmed requirements. A stage, artifact or gate ex
 
 Follow YAGNI, KISS, DRY and SOLID where appropriate.
 
+## Hard gates (before any other action)
+- A recorded decision always wins: if any line of `plan.md` or an accepted risk says "No ..." (or otherwise rules something out) and the request asks for that thing, write `plan.md` with `Status: blocked (decision conflict)`, name the exact line and the request, ask for an explicit "override the recorded decision", then stop. Do not write tests or code, even exploratory. Do not rename or qualify the decision.
+- The plan gate holds in non-interactive runs: write the plan, stop, and report its path.
+
 1. Implement only confirmed requirements.
 2. Do not introduce speculative features.
 3. Prefer the simplest maintainable solution.
