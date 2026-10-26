@@ -37,7 +37,7 @@ A request that contradicts a recorded decision always goes back to you. Trust bo
 
 ## Testing
 
-`evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin. On the last full run (3 runs per case) the plugin averaged 0.99 against 0.65 for the baseline, at about 1.4 times the cost. Most of the gap is on things a plain session does not do, such as plan gates, setup and review. On small tasks that a plain session already handles well, scores are equal and the plugin only adds cost. Run it yourself:
+`evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin. On the 2026-10-26 run (3 runs per case per arm, commit `cfb55ce`) the plugin scored 1.00 against 0.63 for the baseline at 1.38 times the cost. Leaving out the review and init cases, which the baseline cannot do at all, it is 1.00 against 0.76 at 1.31 times the cost. The gap comes from plan gates, running tests before a fix, and trust-boundary checks. On small tasks that a plain session already handles well, scores are equal and the plugin only adds cost. Details in `docs/benchmark-report.md`. Run it yourself:
 
 ```bash
 claude plugin eval . --scaffold --allow-tools Write Edit "Bash(node *)" "Bash(npm *)" "Bash(python3 *)" "Bash(git *)"
