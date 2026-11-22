@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lean-sdlc · a YAGNI-first workflow for Claude Code</title>
+<meta name="description" content="A Claude Code plugin that sizes every task, plans only when needed, builds test-first and reviews in a fresh context. 1.00 vs 0.76 on 12 comparable eval cases.">
+<link rel="icon" href="icon.png">
+<style>
+:root{--bg:#0b0e11;--pan:#12161b;--line:#232a32;--ink:#e6edf3;--sub:#8b949e;--g:#3fb950;--y:#d29922;--b:#58a6ff;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono)}
+a{color:inherit}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 48px;font-size:13px;color:var(--sub)}
+nav .logo{color:var(--ink);text-decoration:none}nav .logo b{color:var(--g)}
+nav .links a{color:var(--sub);text-decoration:none;margin-left:20px}nav .links a:hover{color:var(--ink)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+.hero{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center;padding:56px 0 40px}
+h1{font-size:44px;line-height:1.1;margin:0 0 16px;letter-spacing:-.02em}h1 span{color:var(--g)}
+.lede,.prose{color:var(--sub);font-size:15px;line-height:1.7;font-family:system-ui,-apple-system,sans-serif}
+.inst{margin-top:24px;background:var(--pan);border:1px solid var(--line);border-radius:8px;position:relative}
+.inst pre{margin:0;padding:14px 80px 14px 16px;font:13px/1.8 var(--mono);white-space:pre;overflow-x:auto}
+.copy{position:absolute;right:10px;top:10px;background:none;color:var(--sub);border:1px solid var(--line);border-radius:4px;padding:3px 10px;font:11px var(--mono);cursor:pointer}
+.copy:hover,.copy:focus-visible{color:var(--ink);border-color:var(--sub)}
+.alt{margin-top:10px;font-size:12px;color:var(--sub)}.alt code{color:var(--ink)}
+.term{background:var(--pan);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px;line-height:1.75}
+.bar{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}.bar span{width:10px;height:10px;border-radius:50%;background:#30363d}
+.term pre{margin:0;padding:16px 18px;white-space:pre-wrap;font-family:var(--mono)}
+.g{color:var(--g)}.y{color:var(--y)}.s{color:var(--sub)}.b{color:var(--b)}
+h2{font-size:14px;color:var(--g);margin:72px 0 18px}h2::before{content:"## "}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);align-items:end}
+.step{border:1px solid var(--line);border-right:none;background:var(--pan);padding:16px}.step:last-child{border-right:1px solid var(--line)}
+.step b{color:var(--g);font-size:22px}.step em{font-style:normal;font-size:13px}
+.step p{color:var(--sub);font-size:12.5px;line-height:1.6;margin:6px 0 0;font-family:system-ui,-apple-system,sans-serif}
+.s0{min-height:100px}.s1{min-height:135px}.s2{min-height:170px}.s3{min-height:205px}
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.box{background:var(--pan);border:1px solid var(--line);border-radius:10px;padding:20px}
+.box h3{margin:0 0 8px;font-size:14px}.box p{margin:0}
+.rules{margin-top:16px}
+.ev{display:grid;grid-template-columns:1fr 1.3fr;gap:16px}
+.num{font-size:64px;font-weight:700;color:var(--g);line-height:1}.num small{font-size:24px;color:var(--sub)}
+.row{display:flex;justify-content:space-between;gap:12px;border-top:1px dashed var(--line);padding:10px 0;font-size:13px}.row span{color:var(--sub)}
+.k{font-size:11px;color:var(--sub);margin-bottom:10px;letter-spacing:.04em}
+.chart svg{width:100%;height:auto;display:block}
+.hero>*,.ev>*,.parts>*{min-width:0}
+.note{margin-top:16px;font-size:13px}
+footer{margin-top:80px;padding:24px 48px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:760px){
+  nav{padding:16px 20px}.wrap{padding:0 20px}
+  .hero,.ev,.parts{grid-template-columns:1fr}.hero{padding-top:24px;gap:32px}
+  h1{font-size:34px}.num{font-size:48px}
+  .ladder{grid-template-columns:1fr}.step{border-right:1px solid var(--line);border-bottom:none;min-height:0}.step:last-child{border-bottom:1px solid var(--line)}
+  footer{padding:20px}
+  .chart{overflow-x:auto}.chart svg{min-width:520px}
+}
+</style>
+</head>
+<body>
+<nav><a class="logo" href="./"><b>●</b> lean-sdlc</a><div class="links"><a href="https://github.com/SubaashNair/lean-sdlc#readme">readme</a><a href="benchmark.html">evals</a><a href="https://github.com/SubaashNair/lean-sdlc">github</a></div></nav>
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Your agent asks<br><span>before it builds.</span></h1>
+      <p class="lede">lean-sdlc is a Claude Code plugin that sizes every task, stops for your approval before features, writes the failing test first and hands the diff to a fresh reviewer.</p>
+      <div class="inst"><button class="copy" type="button" aria-label="Copy install commands">copy</button><pre id="install">/plugin marketplace add SubaashNair/lean-sdlc
+/plugin install lean-sdlc@lean-sdlc</pre></div>
+      <p class="alt">Then run <code>/lean-sdlc:lean-init</code> once per repo and ask for work as usual.</p>
+    </div>
+    <div class="term" aria-label="Example session: the skill stops on a recorded decision"><div class="bar"><span></span><span></span><span></span></div><pre><span class="s">&gt;</span> add an owner delete option for board items
+
+<span class="b">⏺ Skill</span> lean-sdlc:lean
+  <span class="s">reading plan.md, plan-*.md, docs/adr/</span>
+
+<span class="y">⚠ Recorded decision conflict</span>
+  plan.md:19  <span class="s">"No owner delete or hide."</span>
+  request     <span class="s">"add an owner delete option"</span>
+
+<span class="g">✓</span> wrote plan-owner-delete.md
+  <span class="s">Status: blocked (decision conflict)</span>
+
+  No code written. Reply <span class="g">"override the recorded
+  decision"</span> to continue.</pre></div>
+  </section>
+
+  <h2>Sizes every task</h2>
+  <div class="ladder">
+    <div class="step s0"><b>S0</b> <em>One-sentence change</em><p>Do it, then run the existing tests. No artifact.</p></div>
+    <div class="step s1"><b>S1</b> <em>Small change or bug</em><p>Failing test first, minimal fix, evidence before "done".</p></div>
+    <div class="step s2"><b>S2</b> <em>Feature</em><p>Write plan.md, stop for approval, build in small slices, review.</p></div>
+    <div class="step s3"><b>S3</b> <em>Large or ambiguous</em><p>Plan with open questions, and ask before building anything.</p></div>
+  </div>
+
+  <h2>What you get</h2>
+  <div class="parts">
+    <div class="box"><h3 class="g">lean</h3><p class="prose">The workflow skill. Triggers on features, fixes and refactors; stays out of the way for typos and questions.</p></div>
+    <div class="box"><h3 class="g">lean-reviewer</h3><p class="prose">A subagent that reviews the diff in a fresh context: correctness, stated requirements, scope and simplicity.</p></div>
+    <div class="box"><h3 class="g">lean-init</h3><p class="prose">One-time setup. Picks the solo or team preset and writes .lean/config.yaml, with an optional plan-gate hook.</p></div>
+  </div>
+  <p class="prose rules">Two rules hold at every size: a request that contradicts a recorded decision goes back to you, and trust boundaries (input size, parse errors, ownership checks) are always in scope.</p>
+
+  <h2>Evaluations</h2>
+  <div class="ev">
+    <div class="box">
+      <div class="k">MEAN SCORE · 12 COMPARABLE CASES · 3 RUNS PER ARM</div>
+      <div class="num">1.00 <small>/ 0.76</small></div>
+      <div class="row" style="margin-top:18px"><span>all 16 (4 plugin-only)</span>1.00 / 0.63</div>
+      <div class="row"><span>real-repo decision held</span>6/6 vs 0/3</div>
+      <div class="row"><span>cost ratio</span>1.31× · 1.38× all 16</div>
+      <div class="row"><span>total spend</span>$14.01 · 96 runs</div>
+      <p class="prose note">On a clean checkout of a real app whose plan says "No owner delete", the plugin stopped in all 6 runs; every plain session built the feature and rewrote the decision. It is a prompt, not enforcement.</p>
+    </div>
+    <div class="box chart"><div class="k"><span class="g">■</span> with plugin &nbsp; <span class="s">■</span> without &nbsp; * plugin-only capability</div>
+<svg viewBox="0 0 600 352" role="img" aria-label="Score per eval case, with and without the plugin" font-size="11" font-family="ui-monospace,Menlo,monospace">
+<text x="0" y="14" fill="#8b949e">s2-plan-gate</text><rect x="150" y="3" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="11" width="28.4" height="7" rx="2" fill="#3a424c"/><text x="564" y="14" fill="#e6edf3">+0.93</text>
+<text x="0" y="36" fill="#8b949e">review-planted*</text><rect x="150" y="25" width="389.8" height="7" rx="2" fill="#3fb950"/><rect x="150" y="33" width="28.4" height="7" rx="2" fill="#3a424c"/><text x="564" y="36" fill="#e6edf3">+0.89</text>
+<text x="0" y="58" fill="#8b949e">init-solo*</text><rect x="150" y="47" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="55" width="81.2" height="7" rx="2" fill="#3a424c"/><text x="564" y="58" fill="#e6edf3">+0.80</text>
+<text x="0" y="80" fill="#8b949e">init-team*</text><rect x="150" y="69" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="77" width="81.2" height="7" rx="2" fill="#3a424c"/><text x="564" y="80" fill="#e6edf3">+0.80</text>
+<text x="0" y="102" fill="#8b949e">s3-ambiguous</text><rect x="150" y="91" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="99" width="101.5" height="7" rx="2" fill="#3a424c"/><text x="564" y="102" fill="#e6edf3">+0.75</text>
+<text x="0" y="124" fill="#8b949e">review-clean*</text><rect x="150" y="113" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="121" width="203.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="124" fill="#e6edf3">+0.50</text>
+<text x="0" y="146" fill="#8b949e">python-bug</text><rect x="150" y="135" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="143" width="272.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="146" fill="#e6edf3">+0.33</text>
+<text x="0" y="168" fill="#8b949e">decision-conflict</text><rect x="150" y="157" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="165" width="304.5" height="7" rx="2" fill="#3a424c"/><text x="564" y="168" fill="#e6edf3">+0.25</text>
+<text x="0" y="190" fill="#8b949e">security-boundary</text><rect x="150" y="179" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="187" width="304.5" height="7" rx="2" fill="#3a424c"/><text x="564" y="190" fill="#e6edf3">+0.25</text>
+<text x="0" y="212" fill="#8b949e">s1-bug-node</text><rect x="150" y="201" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="209" width="316.7" height="7" rx="2" fill="#3a424c"/><text x="564" y="212" fill="#e6edf3">+0.22</text>
+<text x="0" y="234" fill="#8b949e">refactor-rename</text><rect x="150" y="223" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="231" width="337.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="234" fill="#e6edf3">+0.17</text>
+<text x="0" y="256" fill="#8b949e">abstraction-trap</text><rect x="150" y="245" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="253" width="406.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="256" fill="#e6edf3">+0.00</text>
+<text x="0" y="278" fill="#8b949e">dep-trap</text><rect x="150" y="267" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="275" width="406.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="278" fill="#e6edf3">+0.00</text>
+<text x="0" y="300" fill="#8b949e">scope-trap</text><rect x="150" y="289" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="297" width="406.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="300" fill="#e6edf3">+0.00</text>
+<text x="0" y="322" fill="#8b949e">s0-typo</text><rect x="150" y="311" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="319" width="406.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="322" fill="#e6edf3">+0.00</text>
+<text x="0" y="344" fill="#8b949e">no-trigger-explain</text><rect x="150" y="333" width="406.0" height="7" rx="2" fill="#3fb950"/><rect x="150" y="341" width="406.0" height="7" rx="2" fill="#3a424c"/><text x="564" y="344" fill="#e6edf3">+0.00</text>
+</svg>
+    </div>
+  </div>
+  <p class="prose note">Small synthetic repos, one model, 3 runs per case per arm (2026-10-26, commit <code>cfb55ce</code>). Equal scores mean the plugin only added cost. Read the <a href="benchmark.html">full benchmark</a> or the <a href="https://github.com/SubaashNair/lean-sdlc/blob/main/docs/benchmark-report.md">report and its limits</a>.</p>
+</main>
+<footer><span>MIT · SubaashNair</span><span><a href="https://github.com/SubaashNair/lean-sdlc">github.com/SubaashNair/lean-sdlc</a></span></footer>
+<script>
+document.querySelector(".copy").addEventListener("click", async (e) => {
+  const btn = e.currentTarget, pre = document.getElementById("install");
+  try { await navigator.clipboard.writeText(pre.innerText); btn.textContent = "copied"; }
+  catch { getSelection().selectAllChildren(pre); btn.textContent = "press ⌘C"; }
+  setTimeout(() => (btn.textContent = "copy"), 2000);
+});
+</script>
+</body>
+</html>

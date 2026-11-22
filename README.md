@@ -2,6 +2,8 @@
 
 A YAGNI-first workflow for AI-assisted software development in Claude Code. It sizes each task, plans only when the task needs it, builds test-first, reviews in a fresh context, and keeps the diff minimal. The goal is less wasted code and fewer wasted tokens, with human approval kept at the points that matter.
 
+**Site:** https://subaashnair.github.io/lean-sdlc/
+
 ## What you get
 
 | Piece | What it does |
@@ -45,13 +47,34 @@ Then ask for a feature, a bug fix or a refactor as usual. The skill triggers on 
 
 A request that contradicts a recorded decision always goes back to you. Trust boundaries such as input size, parse errors and ownership checks are always in scope.
 
-## Testing
+## Evaluations
 
-`evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin. On the 2026-10-26 run (3 runs per case per arm, commit `cfb55ce`) the plugin scored 1.00 against 0.63 for the baseline at 1.38 times the cost. Leaving out the review and init cases, which the baseline cannot do at all, it is 1.00 against 0.76 at 1.31 times the cost. The gap comes from plan gates, running tests before a fix, and trust-boundary checks. On small tasks that a plain session already handles well, scores are equal and the plugin only adds cost. Details in `docs/benchmark-report.md`. Run it yourself:
+![Eval results: 1.00 with the plugin vs 0.76 without on 12 comparable cases, 1.00 vs 0.63 on all 16](docs/evals.svg)
+
+`evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin on identical seeded repos. Latest run: 2026-10-26, commit `cfb55ce`, 3 runs per case per arm, 96 runs, $14.01.
+
+| Scope | With plugin | Without | Cost ratio |
+|---|---:|---:|---:|
+| All 16 cases | 1.00 | 0.63 | 1.38x |
+| 12 comparable cases (no review or init cases, which the baseline cannot do) | 1.00 | 0.76 | 1.31x |
+
+The gap comes from three places:
+
+- **Plan gates.** On the feature and ambiguous cases the plugin wrote a plan and stopped; the baseline wrote no plan in any run, built code before approval in 2 of 3 feature runs and built billing code in every ambiguous run.
+- **Test discipline.** Every plugin bug fix ran the tests before the first edit and again after; the baseline skipped the first run every time.
+- **Trust boundaries.** The baseline left out the request body size cap in every `security-boundary` run.
+
+On small tasks that a plain session already handles well (typos, scope and dependency traps), scores are equal and the plugin only adds cost.
+
+**Real repo.** `feedback-saas` is a real multi-file app whose approved `plan.md` records "No owner delete or hide". Asked to "add an owner delete option for board items", the plugin stopped 6/6 times across two skill versions: it quoted the decision, wrote a blocked plan and asked for an explicit override. A plain session stopped 0/3 times; every run built the delete route and then rewrote the decision in `plan.md` to match.
+
+Full numbers and graders are in [`docs/benchmark-report.md`](docs/benchmark-report.md), with a rendered view on the [site](https://subaashnair.github.io/lean-sdlc/benchmark.html). Run it yourself:
 
 ```bash
 claude plugin eval . --scaffold --allow-tools Write Edit "Bash(node *)" "Bash(npm *)" "Bash(python3 *)" "Bash(git *)"
 ```
+
+`tests/hooks.sh` unit-tests the optional hooks and `tests/site.sh` checks the site against the report.
 
 ## Limits
 

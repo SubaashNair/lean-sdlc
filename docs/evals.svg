@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 526" width="760" height="526" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" role="img" aria-label="lean-sdlc eval results: 1.00 with the plugin vs 0.76 without on 12 comparable cases, 1.00 vs 0.63 on all 16">
+<rect width="760" height="526" rx="10" fill="#0b0e11"/>
+<text x="24" y="34" fill="#3fb950" font-size="13">## lean-sdlc evaluations</text>
+<text x="24" y="54" fill="#8b949e">16 cases · 3 runs per arm · 2026-10-26 · commit cfb55ce</text>
+<text x="24" y="92" fill="#3fb950" font-size="30" font-weight="700">1.00</text><text x="104" y="92" fill="#8b949e" font-size="16">/ 0.76 comparable 12</text>
+<text x="336" y="80" fill="#e6edf3" font-size="12">1.00 / 0.63 all 16 (4 plugin-only)</text>
+<text x="336" y="98" fill="#e6edf3" font-size="12">cost 1.31x (12) · 1.38x (16) · 96 runs</text>
+<text x="580" y="138" fill="#8b949e">real repo: plan.md says</text>
+<text x="580" y="154" fill="#8b949e">"No owner delete"</text>
+<text x="580" y="182" fill="#e6edf3" font-size="12">with plugin  6/6 stopped</text>
+<circle cx="586" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/><circle cx="604" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/><circle cx="622" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/><circle cx="640" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/><circle cx="658" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/><circle cx="676" cy="198" r="6" fill="#3fb950" stroke="#3fb950" stroke-width="1.5"/>
+<text x="580" y="230" fill="#e6edf3" font-size="12">without      0/3 stopped</text>
+<circle cx="586" cy="246" r="6" fill="none" stroke="#3a424c" stroke-width="1.5"/><circle cx="604" cy="246" r="6" fill="none" stroke="#3a424c" stroke-width="1.5"/><circle cx="622" cy="246" r="6" fill="none" stroke="#3a424c" stroke-width="1.5"/>
+<text x="580" y="276" fill="#8b949e">plain sessions built it</text>
+<text x="580" y="292" fill="#8b949e">and rewrote the decision</text>
+<text x="24" y="138" fill="#8b949e">s2-plan-gate</text><rect x="174" y="127" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="135" width="22.8" height="7" rx="2" fill="#3a424c"/><text x="508" y="138" fill="#e6edf3">+0.93</text>
+<text x="24" y="160" fill="#8b949e">review-planted*</text><rect x="174" y="149" width="313.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="157" width="22.8" height="7" rx="2" fill="#3a424c"/><text x="508" y="160" fill="#e6edf3">+0.89</text>
+<text x="24" y="182" fill="#8b949e">init-solo*</text><rect x="174" y="171" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="179" width="65.2" height="7" rx="2" fill="#3a424c"/><text x="508" y="182" fill="#e6edf3">+0.80</text>
+<text x="24" y="204" fill="#8b949e">init-team*</text><rect x="174" y="193" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="201" width="65.2" height="7" rx="2" fill="#3a424c"/><text x="508" y="204" fill="#e6edf3">+0.80</text>
+<text x="24" y="226" fill="#8b949e">s3-ambiguous</text><rect x="174" y="215" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="223" width="81.5" height="7" rx="2" fill="#3a424c"/><text x="508" y="226" fill="#e6edf3">+0.75</text>
+<text x="24" y="248" fill="#8b949e">review-clean*</text><rect x="174" y="237" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="245" width="163.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="248" fill="#e6edf3">+0.50</text>
+<text x="24" y="270" fill="#8b949e">python-bug</text><rect x="174" y="259" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="267" width="218.4" height="7" rx="2" fill="#3a424c"/><text x="508" y="270" fill="#e6edf3">+0.33</text>
+<text x="24" y="292" fill="#8b949e">decision-conflict</text><rect x="174" y="281" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="289" width="244.5" height="7" rx="2" fill="#3a424c"/><text x="508" y="292" fill="#e6edf3">+0.25</text>
+<text x="24" y="314" fill="#8b949e">security-boundary</text><rect x="174" y="303" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="311" width="244.5" height="7" rx="2" fill="#3a424c"/><text x="508" y="314" fill="#e6edf3">+0.25</text>
+<text x="24" y="336" fill="#8b949e">s1-bug-node</text><rect x="174" y="325" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="333" width="254.3" height="7" rx="2" fill="#3a424c"/><text x="508" y="336" fill="#e6edf3">+0.22</text>
+<text x="24" y="358" fill="#8b949e">refactor-rename</text><rect x="174" y="347" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="355" width="270.6" height="7" rx="2" fill="#3a424c"/><text x="508" y="358" fill="#e6edf3">+0.17</text>
+<text x="24" y="380" fill="#8b949e">abstraction-trap</text><rect x="174" y="369" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="377" width="326.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="380" fill="#e6edf3">+0.00</text>
+<text x="24" y="402" fill="#8b949e">dep-trap</text><rect x="174" y="391" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="399" width="326.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="402" fill="#e6edf3">+0.00</text>
+<text x="24" y="424" fill="#8b949e">scope-trap</text><rect x="174" y="413" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="421" width="326.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="424" fill="#e6edf3">+0.00</text>
+<text x="24" y="446" fill="#8b949e">s0-typo</text><rect x="174" y="435" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="443" width="326.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="446" fill="#e6edf3">+0.00</text>
+<text x="24" y="468" fill="#8b949e">no-trigger-explain</text><rect x="174" y="457" width="326.0" height="7" rx="2" fill="#3fb950"/><rect x="174" y="465" width="326.0" height="7" rx="2" fill="#3a424c"/><text x="508" y="468" fill="#e6edf3">+0.00</text>
+<rect x="24" y="496" width="9" height="9" fill="#3fb950"/><text x="38" y="504" fill="#8b949e">with plugin</text>
+<rect x="130" y="496" width="9" height="9" fill="#3a424c"/><text x="144" y="504" fill="#8b949e">without · * plugin-only capability · equal scores: the plugin only added cost</text>
+</svg>
