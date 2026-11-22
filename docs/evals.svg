@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 526" width="760" height="526" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" role="img" aria-label="lean-sdlc eval results: 1.00 with the plugin vs 0.63 without across 16 cases">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 526" width="760" height="526" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" role="img" aria-label="lean-sdlc eval results: 1.00 with the plugin vs 0.76 without on 12 comparable cases, 1.00 vs 0.63 on all 16">
 <rect width="760" height="526" rx="10" fill="#0b0e11"/>
 <text x="24" y="34" fill="#3fb950" font-size="13">## lean-sdlc evaluations</text>
 <text x="24" y="54" fill="#8b949e">16 cases · 3 runs per arm · 2026-10-26 · commit cfb55ce</text>
-<text x="24" y="92" fill="#3fb950" font-size="30" font-weight="700">1.00</text><text x="104" y="92" fill="#8b949e" font-size="16">/ 0.63 mean score</text>
-<text x="300" y="80" fill="#e6edf3" font-size="12">1.00 / 0.76 comparable 12 cases</text>
-<text x="300" y="98" fill="#e6edf3" font-size="12">1.38x cost · $14.01 for 96 runs</text>
+<text x="24" y="92" fill="#3fb950" font-size="30" font-weight="700">1.00</text><text x="104" y="92" fill="#8b949e" font-size="16">/ 0.76 comparable 12</text>
+<text x="300" y="80" fill="#e6edf3" font-size="12">1.00 / 0.63 all 16 (4 plugin-only)</text>
+<text x="300" y="98" fill="#e6edf3" font-size="12">cost 1.31x (12) · 1.38x (16) · 96 runs</text>
 <text x="580" y="138" fill="#8b949e">real repo: plan.md says</text>
 <text x="580" y="154" fill="#8b949e">"No owner delete"</text>
 <text x="580" y="182" fill="#e6edf3" font-size="12">with plugin  6/6 stopped</text>

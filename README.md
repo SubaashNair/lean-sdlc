@@ -49,7 +49,7 @@ A request that contradicts a recorded decision always goes back to you. Trust bo
 
 ## Evaluations
 
-![Eval results: 1.00 with the plugin vs 0.63 without across 16 cases](docs/evals.svg)
+![Eval results: 1.00 with the plugin vs 0.76 without on 12 comparable cases, 1.00 vs 0.63 on all 16](docs/evals.svg)
 
 `evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin on identical seeded repos. Latest run: 2026-10-26, commit `cfb55ce`, 3 runs per case per arm, 96 runs, $14.01.
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lean-sdlc · a YAGNI-first workflow for Claude Code</title>
-<meta name="description" content="A Claude Code plugin that sizes every task, plans only when needed, builds test-first and reviews in a fresh context. 1.00 vs 0.63 on 16 eval cases.">
+<meta name="description" content="A Claude Code plugin that sizes every task, plans only when needed, builds test-first and reviews in a fresh context. 1.00 vs 0.76 on 12 comparable eval cases.">
 <link rel="icon" href="icon.png">
 <style>
 :root{--bg:#0b0e11;--pan:#12161b;--line:#232a32;--ink:#e6edf3;--sub:#8b949e;--g:#3fb950;--y:#d29922;--b:#58a6ff;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
@@ -42,6 +42,7 @@ h2{font-size:14px;color:var(--g);margin:72px 0 18px}h2::before{content:"## "}
 .row{display:flex;justify-content:space-between;gap:12px;border-top:1px dashed var(--line);padding:10px 0;font-size:13px}.row span{color:var(--sub)}
 .k{font-size:11px;color:var(--sub);margin-bottom:10px;letter-spacing:.04em}
 .chart svg{width:100%;height:auto;display:block}
+.hero>*,.ev>*,.parts>*{min-width:0}
 .note{margin-top:16px;font-size:13px}
 footer{margin-top:80px;padding:24px 48px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media (max-width:760px){
@@ -50,6 +51,7 @@ footer{margin-top:80px;padding:24px 48px;border-top:1px solid var(--line);font-s
   h1{font-size:34px}.num{font-size:48px}
   .ladder{grid-template-columns:1fr}.step{border-right:1px solid var(--line);border-bottom:none;min-height:0}.step:last-child{border-bottom:1px solid var(--line)}
   footer{padding:20px}
+  .chart{overflow-x:auto}.chart svg{min-width:520px}
 }
 </style>
 </head>
@@ -58,7 +60,7 @@ footer{margin-top:80px;padding:24px 48px;border-top:1px solid var(--line);font-s
 <main class="wrap">
   <section class="hero">
     <div>
-      <h1>Your agent writes<br><span>less code.</span></h1>
+      <h1>Your agent asks<br><span>before it builds.</span></h1>
       <p class="lede">lean-sdlc is a Claude Code plugin that sizes every task, stops for your approval before features, writes the failing test first and hands the diff to a fresh reviewer.</p>
       <div class="inst"><button class="copy" type="button" aria-label="Copy install commands">copy</button><pre id="install">/plugin marketplace add SubaashNair/lean-sdlc
 /plugin install lean-sdlc@lean-sdlc</pre></div>
@@ -99,13 +101,13 @@ footer{margin-top:80px;padding:24px 48px;border-top:1px solid var(--line);font-s
   <h2>Evaluations</h2>
   <div class="ev">
     <div class="box">
-      <div class="k">MEAN SCORE · 16 CASES · 3 RUNS PER ARM</div>
-      <div class="num">1.00 <small>/ 0.63</small></div>
-      <div class="row" style="margin-top:18px"><span>comparable 12 cases</span>1.00 / 0.76</div>
+      <div class="k">MEAN SCORE · 12 COMPARABLE CASES · 3 RUNS PER ARM</div>
+      <div class="num">1.00 <small>/ 0.76</small></div>
+      <div class="row" style="margin-top:18px"><span>all 16 (4 plugin-only)</span>1.00 / 0.63</div>
       <div class="row"><span>real-repo decision held</span>6/6 vs 0/3</div>
-      <div class="row"><span>cost ratio</span>1.38×</div>
+      <div class="row"><span>cost ratio</span>1.31× · 1.38× all 16</div>
       <div class="row"><span>total spend</span>$14.01 · 96 runs</div>
-      <p class="prose note">On a real app whose plan says "No owner delete", every plain session built the feature and rewrote the decision. The plugin stopped every time.</p>
+      <p class="prose note">On a clean checkout of a real app whose plan says "No owner delete", the plugin stopped in all 6 runs; every plain session built the feature and rewrote the decision. It is a prompt, not enforcement.</p>
     </div>
     <div class="box chart"><div class="k"><span class="g">■</span> with plugin &nbsp; <span class="s">■</span> without &nbsp; * plugin-only capability</div>
 <svg viewBox="0 0 600 352" role="img" aria-label="Score per eval case, with and without the plugin" font-size="11" font-family="ui-monospace,Menlo,monospace">
