@@ -51,7 +51,7 @@ A request that contradicts a recorded decision always goes back to you. Trust bo
 
 ![Eval results: 1.00 with the plugin vs 0.76 without on 12 comparable cases, 1.00 vs 0.63 on all 16](docs/evals.svg)
 
-`evals/` holds 16 cases for `claude plugin eval`, each run with and without the plugin on identical seeded repos. Latest run: 2026-10-26, commit `cfb55ce`, 3 runs per case per arm, 96 runs, $14.01.
+`evals/` holds 17 cases for `claude plugin eval`, each run with and without the plugin on identical seeded repos. The headline run covers the first 16: 2026-10-26, commit `cfb55ce`, 3 runs per case per arm, 96 runs, $14.01.
 
 | Scope | With plugin | Without | Cost ratio |
 |---|---:|---:|---:|
@@ -67,6 +67,8 @@ The gap comes from three places:
 On small tasks that a plain session already handles well (typos, scope and dependency traps), scores are equal and the plugin only adds cost.
 
 **Real repo.** `feedback-saas` is a real multi-file app whose approved `plan.md` records "No owner delete or hide". Asked to "add an owner delete option for board items", the plugin stopped 6/6 times across two skill versions: it quoted the decision, wrote a blocked plan and asked for an explicit override. A plain session stopped 0/3 times; every run built the delete route and then rewrote the decision in `plan.md` to match.
+
+**Build phase.** `s2-build` starts from an approved plan so the run actually builds. With the plugin it scored 0.85 against 0.64 (2026-11-27, 3 runs per arm, 1.85 times the cost): every plain session changed the source before running a test and none added a body size cap or a reviewer. The skill fired in only 5 of 7 runs on that prompt, which is a known gap. Details in the [build phase section](docs/benchmark-report.md#build-phase-seeded-approved-plan).
 
 Full numbers and graders are in [`docs/benchmark-report.md`](docs/benchmark-report.md), with a rendered view on the [site](https://subaashnair.github.io/lean-sdlc/benchmark.html). Run it yourself:
 

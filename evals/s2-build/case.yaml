@@ -1,0 +1,75 @@
+schema_version: "1.1"
+name: s2-build
+description: S2 build phase. plan.md is already approved, so the run builds it. Tests run first, trust boundaries are handled, only planned files change, the reviewer is dispatched, and the report shows evidence.
+tags: [size, s2, build]
+runs: 1
+execution:
+  max_turns: 40
+  timeout_seconds: 600
+  allowed_tools: [Read, Glob, Grep, Skill, Agent]
+  prompt: |
+    plan.md is approved. Build it.
+context:
+  scaffold_script: scaffold.sh
+graders:
+  # Test-before-source-change order is checked from traces, not here: tool_order matches one tool name
+  # (Edit or Write, not either), and an llm judge on the trace disagreed with the traces in 2 of 6 runs.
+  - name: tests-run-after
+    type: tool_used
+    tool: Bash
+    input_match: 'node --test|npm test'
+    min: 2
+  - name: post-built
+    type: regex
+    pattern: "POST[\\s\\S]*/notes|/notes[\\s\\S]*POST"
+    target: { source: file, path: src/notes.js }
+  - name: get-by-id-built
+    type: regex
+    pattern: 'notes\\?/'
+    target: { source: file, path: src/notes.js }
+  - name: post-tested
+    type: regex
+    pattern: 'POST'
+    target: { source: file, path: test/notes.test.js }
+  - name: length-checked
+    type: regex
+    pattern: '\b500\b'
+    target: { source: file, path: src/notes.js }
+  - name: body-size-cap
+    type: regex
+    pattern: '413|too large|too big|maxBytes|MAX_BODY|byteLength|\.length\s*>\s*\d{4,}|size\s*>'
+    target: { source: file, path: src/notes.js }
+  - name: parse-errors-handled
+    type: regex
+    pattern: 'try\s*\{|catch'
+    target: { source: file, path: src/notes.js }
+  - name: reviewer-dispatched
+    type: tool_used
+    tool: Agent
+    input_match: 'lean-reviewer'
+  - name: legacy-untouched
+    type: regex
+    pattern: 'function old_fmt\(a,b\)\{ if\(a\)'
+    target: { source: file, path: src/legacy.js }
+  - name: legacy-not-edited
+    type: tool_used
+    tool: Edit
+    input_match: 'legacy\.js'
+    min: 0
+    max: 0
+  - name: plan-still-approved
+    type: regex
+    pattern: 'Status: approved'
+    target: { source: file, path: plan.md }
+  - name: evidence-in-report
+    type: regex
+    flags: i
+    pattern: '# pass \d+|\b\d+ (tests? )?pass(ed|ing)?\b|\bpass(ed)?:? \d+'
+  - name: net-line
+    type: regex
+    pattern: 'net\W{0,4}(about\s*)?\+\d+\s*[-−]\s*\d+'
+  - name: skill-fired-indicator
+    type: tool_used
+    tool: Skill
+    input_match: 'lean'
+    arm: with-only

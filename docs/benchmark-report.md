@@ -68,5 +68,33 @@ Every with-skill run invoked `lean-sdlc:lean`, quoted `plan.md:19`, wrote `plan-
 
 **Honest read:** on a clean checkout the instruction-level guard held 6/6 across two skill versions, against 0/3 for the baseline. It is still a prompt, not enforcement: 6 runs on one repo and one request do not make it deterministic, and a competing project-level skill can override it. Remove stale `.claude/skills/lean*` copies when installing the plugin.
 
+## Build phase (seeded approved plan)
+`evals/s2-build` starts from an already approved `plan.md`, so the run builds. All other S2 and S3 cases stop at the plan gate, so this is the only case that measures what happens after approval. The seeded repo is a small node:http notes module with one passing test and a port-free test helper (the eval sandbox blocks local ports). The plan asks for `POST /notes` (text 1 to 500 characters) and `GET /notes/:id`, and names two files as the scope. An unrelated `src/legacy.js` is a scope trap.
+
+**Run:** 2026-11-27 02:33 UTC, Claude Code 2.1.327, claude-opus-5-5, 3 runs per arm, `--ablation with-without`, $1.96 total.
+
+| Grader | With | Without |
+|---|---:|---:|
+| Tests run at least twice | 3/3 | 1/3 |
+| POST and GET by id built, POST tested, 500 limit checked, parse errors handled | 3/3 | 3/3 |
+| Request body size cap | 2/3 | 0/3 |
+| `lean-reviewer` dispatched | 2/3 | 0/3 |
+| Fresh test output pasted in the report | 2/3 | 0/3 |
+| `src/legacy.js` untouched, plan still approved | 3/3 | 3/3 |
+| Net line count in the report | 0/3 | 0/3 |
+| Tests run before the first change to `src/notes.js` (from traces, not scored) | 3/3 | 0/3 |
+| Skill fired (indicator, not scored) | 2/3 | n/a |
+| **Score** | **0.85** | **0.64** |
+| Cost per run | $0.423 | $0.229 |
+
+**Reading**
+- **The gap is the same discipline as in the headline cases.** Every baseline run wrote `src/notes.js` before running any test, none added a body size cap, none dispatched a reviewer, and none pasted test output. Both arms built the feature correctly and kept to scope; a plain session does not need help with that here.
+- **The skill did not fire in 1 of 3 runs.** That run behaved like the baseline on the body cap and the reviewer, which accounts for most of the with-arm misses. Across the seven with-plugin runs on the final scaffold on 2026-11-27 (one diagnostic run and two 3-run comparisons), the skill fired in 5. A prompt like "plan.md is approved. Build it." does not reliably match the skill's trigger description. This is a recorded failure to fix in the skill.
+- **The net line rule was never followed as written.** git cannot run in the eval sandbox, so runs that reported size gave a hand estimate in prose ("about +95 −4") instead of `net: +A -D`, and one fired run reported none.
+- **One fired run summarized the tests instead of pasting output**, against the "paste it" rule in §6.
+- **Cost is 1.85 times the baseline**, mostly from the reviewer subagent.
+
+**Limits.** One small repo, one request, 3 runs per arm, one model. The test-before-change order is read from the kept traces by hand because the eval tool's `tool_order` grader matches a single tool name (a run may use Write or Edit), and an LLM judge given the trace disagreed with the traces in 2 of 6 runs; that grader was removed. The net-line grader was loosened before this run to accept prose forms such as "net +93 -6"; it still matched nothing. This run is not part of the 16-case headline table above.
+
 ## Deterministic enforcement
 `lean-init` offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until every `plan.md` / `plan-*.md` at the repo root has `Status: approved` (fails closed without `jq`). The model can still write that status itself or edit through Bash, so the hook guards against accidental edits only. A blocked decision-conflict plan stops all source edits while it exists, but the hook cannot detect a conflict the model never records.
