@@ -94,6 +94,8 @@ Every with-skill run invoked `lean-sdlc:lean`, quoted `plan.md:19`, wrote `plan-
 - **The net line (`net: +A -D`) is not graded.** git does not work on the eval host (no Xcode command-line tools), so it cannot be computed. Both runs where the skill fired gave a hand estimate in prose instead ("about +95 −4"); the run where it did not fire gave none.
 - **Cost is 1.85 times the baseline.** The run where the skill did not fire cost $0.262, close to the baseline.
 
+**After the trigger fix (2026-11-27).** The skill description now also names "building or continuing an approved plan.md". On 6 with-plugin runs of `s2-build` (no baseline arm; the baseline does not load the skill, so its numbers above still apply) the skill fired 6/6, against 5 of 7 before. Mean score 0.97, with the body cap and the reviewer at 6/6, tests run at least twice 5/6, and raw test output pasted 4/6. Cost $3.16 for the 6 runs. Trigger regression checks on the same change: `no-trigger-explain` 3/3 (the skill stayed out of a read-only question) and `s0-typo` fixed the typo 3/3 with no artifacts and no skill call, as the description intends.
+
 **Limits.** One small repo, one request, 3 runs per arm, one model. `reviewer-dispatched` matches the plugin's own agent name, so the baseline cannot pass it; no baseline run used any subagent. The test-before-change order is read from the kept traces because the eval tool's `tool_order` grader matches a single tool name (a run may use Write or Edit), and an LLM judge given the trace disagreed with the traces in 2 of 6 runs. The scope trap did not separate the arms (both 3/3). This run is not part of the 16-case headline table above.
 
 ## Deterministic enforcement

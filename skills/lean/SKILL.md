@@ -1,6 +1,6 @@
 ---
 name: lean
-description: YAGNI-first workflow for features, bug fixes (even one-line ones), refactors and renames across files. Skip for typos, cosmetic edits and questions that change no code. Sizes the task, plans only when needed, builds test-first, reviews in fresh context, keeps the diff minimal.
+description: YAGNI-first workflow for features, bug fixes (even one-line ones), refactors and renames across files, and for building or continuing an approved plan.md ("plan is approved, build it"). Skip for typos, cosmetic edits and questions that change no code. Sizes the task, plans only when needed, builds test-first, reviews in fresh context, keeps the diff minimal.
 ---
 
 # Lean
