@@ -14,6 +14,7 @@ context:
 graders:
   # Test-before-source-change order is checked from traces, not here: tool_order matches one tool name
   # (Edit or Write, not either), and an llm judge on the trace disagreed with the traces in 2 of 6 runs.
+  # The net line (`net: +A -D`) is not graded: git is unavailable on the eval host, so no run can compute it.
   - name: tests-run-after
     type: tool_used
     tool: Bash
@@ -21,7 +22,7 @@ graders:
     min: 2
   - name: post-built
     type: regex
-    pattern: "POST[\\s\\S]*/notes|/notes[\\s\\S]*POST"
+    pattern: "['\"]POST['\"]"
     target: { source: file, path: src/notes.js }
   - name: get-by-id-built
     type: regex
@@ -33,11 +34,11 @@ graders:
     target: { source: file, path: test/notes.test.js }
   - name: length-checked
     type: regex
-    pattern: '\b500\b'
+    pattern: '[<>]=?\s*500\b'
     target: { source: file, path: src/notes.js }
   - name: body-size-cap
     type: regex
-    pattern: '413|too large|too big|maxBytes|MAX_BODY|byteLength|\.length\s*>\s*\d{4,}|size\s*>'
+    pattern: '413|too large|too big|maxBytes|MAX_BODY|\.length\s*>\s*\d{4,}|size\s*>'
     target: { source: file, path: src/notes.js }
   - name: parse-errors-handled
     type: regex
@@ -57,6 +58,12 @@ graders:
     input_match: 'legacy\.js'
     min: 0
     max: 0
+  - name: legacy-not-written
+    type: tool_used
+    tool: Write
+    input_match: 'legacy\.js'
+    min: 0
+    max: 0
   - name: plan-still-approved
     type: regex
     pattern: 'Status: approved'
@@ -64,10 +71,7 @@ graders:
   - name: evidence-in-report
     type: regex
     flags: i
-    pattern: '# pass \d+|\b\d+ (tests? )?pass(ed|ing)?\b|\bpass(ed)?:? \d+'
-  - name: net-line
-    type: regex
-    pattern: 'net\W{0,4}(about\s*)?\+\d+\s*[-−]\s*\d+'
+    pattern: 'ℹ pass \d+|# pass \d+|✔'
   - name: skill-fired-indicator
     type: tool_used
     tool: Skill

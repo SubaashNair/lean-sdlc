@@ -71,7 +71,7 @@ Every with-skill run invoked `lean-sdlc:lean`, quoted `plan.md:19`, wrote `plan-
 ## Build phase (seeded approved plan)
 `evals/s2-build` starts from an already approved `plan.md`, so the run builds. All other S2 and S3 cases stop at the plan gate, so this is the only case that measures what happens after approval. The seeded repo is a small node:http notes module with one passing test and a port-free test helper (the eval sandbox blocks local ports). The plan asks for `POST /notes` (text 1 to 500 characters) and `GET /notes/:id`, and names two files as the scope. An unrelated `src/legacy.js` is a scope trap.
 
-**Run:** 2026-11-27 02:33 UTC, Claude Code 2.1.327, claude-opus-5-5, 3 runs per arm, `--ablation with-without`, $1.96 total.
+**Run:** 2026-11-27 02:33 UTC, Claude Code 2.1.327, claude-opus-5-5, 3 runs per arm, `--ablation with-without`, $1.96 total. Scores below are from the graders in `evals/s2-build/case.yaml` as committed, applied to the kept traces and files of that run; the graders were tightened after a review, so they differ from the eval tool's own report of the same run (0.81 / 0.60).
 
 | Grader | With | Without |
 |---|---:|---:|
@@ -79,22 +79,22 @@ Every with-skill run invoked `lean-sdlc:lean`, quoted `plan.md:19`, wrote `plan-
 | POST and GET by id built, POST tested, 500 limit checked, parse errors handled | 3/3 | 3/3 |
 | Request body size cap | 2/3 | 0/3 |
 | `lean-reviewer` dispatched | 2/3 | 0/3 |
-| Fresh test output pasted in the report | 2/3 | 0/3 |
+| Raw test runner output pasted in the report | 1/3 | 0/3 |
 | `src/legacy.js` untouched, plan still approved | 3/3 | 3/3 |
-| Net line count in the report | 0/3 | 0/3 |
 | Tests run before the first change to `src/notes.js` (from traces, not scored) | 3/3 | 0/3 |
 | Skill fired (indicator, not scored) | 2/3 | n/a |
-| **Score** | **0.85** | **0.64** |
+| **Score (13 graders)** | **0.90** | **0.72** |
 | Cost per run | $0.423 | $0.229 |
 
 **Reading**
-- **The gap is the same discipline as in the headline cases.** Every baseline run wrote `src/notes.js` before running any test, none added a body size cap, none dispatched a reviewer, and none pasted test output. Both arms built the feature correctly and kept to scope; a plain session does not need help with that here.
-- **The skill did not fire in 1 of 3 runs.** That run behaved like the baseline on the body cap and the reviewer, which accounts for most of the with-arm misses. Across the seven with-plugin runs on the final scaffold on 2026-11-27 (one diagnostic run and two 3-run comparisons), the skill fired in 5. A prompt like "plan.md is approved. Build it." does not reliably match the skill's trigger description. This is a recorded failure to fix in the skill.
-- **The net line rule was never followed as written.** git cannot run in the eval sandbox, so runs that reported size gave a hand estimate in prose ("about +95 −4") instead of `net: +A -D`, and one fired run reported none.
-- **One fired run summarized the tests instead of pasting output**, against the "paste it" rule in §6.
-- **Cost is 1.85 times the baseline**, mostly from the reviewer subagent.
+- **The gap is the same discipline as in the headline cases.** Every baseline run wrote `src/notes.js` before running any test, none added a body size cap, none used any subagent, and none pasted test output. Both arms built the feature correctly and kept to scope; a plain session needs no help with that here.
+- **The skill did not fire in 1 of 3 runs.** That run missed the body cap and the reviewer, like the baseline. Across the seven with-plugin runs on the final scaffold on 2026-11-27 (one diagnostic run and two 3-run comparisons), the skill fired in 5. A prompt like "plan.md is approved. Build it." does not reliably match the skill's trigger description. This is a recorded failure to fix in the skill.
+- **Test-first is not explained by the skill firing alone.** The with-plugin runs where the skill did not fire also ran the tests before changing the source. The plugin's skill description, which mentions building test-first, is in context either way, which may be enough.
+- **Pasting fresh output (§6) was followed in 1 of 3 runs.** The others wrote "all 7 tests pass" in prose.
+- **The net line (`net: +A -D`) is not graded.** git does not work on the eval host (no Xcode command-line tools), so it cannot be computed. Both runs where the skill fired gave a hand estimate in prose instead ("about +95 −4"); the run where it did not fire gave none.
+- **Cost is 1.85 times the baseline.** The run where the skill did not fire cost $0.262, close to the baseline.
 
-**Limits.** One small repo, one request, 3 runs per arm, one model. The test-before-change order is read from the kept traces by hand because the eval tool's `tool_order` grader matches a single tool name (a run may use Write or Edit), and an LLM judge given the trace disagreed with the traces in 2 of 6 runs; that grader was removed. The net-line grader was loosened before this run to accept prose forms such as "net +93 -6"; it still matched nothing. This run is not part of the 16-case headline table above.
+**Limits.** One small repo, one request, 3 runs per arm, one model. `reviewer-dispatched` matches the plugin's own agent name, so the baseline cannot pass it; no baseline run used any subagent. The test-before-change order is read from the kept traces because the eval tool's `tool_order` grader matches a single tool name (a run may use Write or Edit), and an LLM judge given the trace disagreed with the traces in 2 of 6 runs. The scope trap did not separate the arms (both 3/3). This run is not part of the 16-case headline table above.
 
 ## Deterministic enforcement
 `lean-init` offers an opt-in plan-gate hook (`.lean/plan-gate.sh`) that blocks source edits until every `plan.md` / `plan-*.md` at the repo root has `Status: approved` (fails closed without `jq`). The model can still write that status itself or edit through Bash, so the hook guards against accidental edits only. A blocked decision-conflict plan stops all source edits while it exists, but the hook cannot detect a conflict the model never records.
